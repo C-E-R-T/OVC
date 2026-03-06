@@ -1,7 +1,7 @@
 import { Link, Route, Routes } from 'react-router-dom'
 import './App.css'
 import HomePage from './pages/Home/HomePage'
-import SchedulePage from './pages/Schedule/SchedulePage'
+import SchedulePage from './pages/Calendar/CalendarPage'
 
 function App() {
 

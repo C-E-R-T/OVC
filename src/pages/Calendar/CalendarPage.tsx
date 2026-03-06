@@ -1,4 +1,4 @@
-function SchedulePage(){
+function CalendarPage(){
     return(
         <div>
             SchedulePage 
@@ -6,4 +6,4 @@ function SchedulePage(){
     )
 }
 
-export default SchedulePage
+export default CalendarPage
