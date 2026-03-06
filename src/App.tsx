@@ -9,12 +9,12 @@ function App() {
     <div>
       <nav>
         <Link to="/">홈</Link>
-        <Link to="/schedule">일정 페이지</Link>
+        <Link to="/calendar">일정 페이지</Link>
       </nav>
 
       <Routes>
         <Route path="/" element={<HomePage/>}/>
-        <Route path="/schedule" element={<SchedulePage/>}/>
+        <Route path="/calendar" element={<SchedulePage/>}/>
       </Routes>
     </div>
   )

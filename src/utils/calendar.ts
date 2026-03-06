@@ -5,16 +5,16 @@ export function mapSchedulesToEvents(
   schedules: Schedule[]
 ): CalendarEventType[] {
   return schedules.map((schedule) => ({
-    id: String(schedule.id),
-    title: schedule.exam_name,
-    date: schedule.exam_at,
+    id: String(schedule.scheduleId),
+    title: schedule.examName,
+    date: schedule.examType,
     extendedProps: {
-      scheduleId: schedule.id,
-      certId: schedule.cert_id,
-      examType: schedule.exam_type,
-      applyStartAt: schedule.apply_start_at,
-      applyEndAt: schedule.apply_end_at,
-      resultAt: schedule.result_at,
+      scheduleId: schedule.scheduleId,
+      certId: schedule.certificateName,
+      examType: schedule.examType,
+      applyStartAt: schedule.startDate,
+      applyEndAt: schedule.endDate,
+      // resultAt: schedule.resultAt,
     },
   }));
 }

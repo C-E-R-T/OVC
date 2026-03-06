@@ -10,15 +10,13 @@ export type Certificate = {
 };
 
 export type Schedule = {
-  id: number;
-  cert_id: number;
-  exam_name: string;
-  exam_type: string;
-  apply_start_at: string;
-  apply_end_at: string;
-  exam_at: string;
-  result_at: string;
-  created_at: string;
+  scheduleId: number;
+  certificateName: number;
+  examName: string;
+  examType: string;
+  eventType: string;
+  startDate: string;
+  endDate: string;
 };
 
 export type CalendarEventType = {
@@ -31,6 +29,6 @@ export type CalendarEventType = {
     examType: string;
     applyStartAt: string;
     applyEndAt: string;
-    resultAt: string;
+    // resultAt: string;
   };
 };
