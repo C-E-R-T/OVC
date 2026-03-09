@@ -7,11 +7,36 @@ function CertSearch() {
     const [viewType, setViewType] = useState("grid");
 
     return (
-        <>
+        <div className="flex flex-row">
             {/* 좌측 - 사이드바 영역 */}
-  
+            <div className="w-[320px] h-screen p-[50px] bg-green-100">
+                <h3 className="font-medium text-lg mb-6">카테고리</h3>
+                <div className="space-y-4">
+
+                    <label className="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" className="w-5 h-5 accent-green-600" />
+                        <span className="text-gray-700 font-medium">IT/기술</span>
+                    </label>
+
+                    <label className="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" className="w-5 h-5 accent-green-600" />
+                        <span className="text-gray-700 font-medium">경영/비즈니스</span>
+                    </label>
+
+                    <label className="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" className="w-5 h-5 accent-green-600" />
+                        <span className="text-gray-700 font-medium">금융/회계</span>
+                    </label>
+
+                    <label className="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" className="w-5 h-5 accent-green-600" />
+                        <span className="text-gray-700 font-medium">외국어</span>
+                    </label>
+
+                </div>
+            </div>
             {/* 우측 - 카드 영역 */}
-            <div className="p-8">
+            <div className="flex-1 p-8">
                 <div className="flex justify-between">
                     <div>
                         <h1 className="font-semibold text-4xl pb-2">자격증 탐색</h1>
@@ -45,7 +70,7 @@ function CertSearch() {
                     />
                 )}
             </div>
-        </>
+        </div>
     )
 }
 
