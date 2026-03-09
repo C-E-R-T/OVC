@@ -12,7 +12,7 @@ const MyCertCard = ({
   expirationDate,
 }: MyCertCardProps) => {
   return (
-    <article className="w-full max-w-[480px] rounded-xl border bg-white p-5 shadow-xl ">
+    <article className="w-full rounded-xl border border-slate-200 bg-white p-5 shadow-xl ">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h2 className="text-2xl font-extrabold text-slate-900">{name}</h2>
