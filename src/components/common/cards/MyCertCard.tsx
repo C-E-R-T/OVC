@@ -1,6 +1,7 @@
 interface MyCertCardProps {
   name: string;
   authority: string;
+  certNum?: string;
   passingDate: string;
   expirationDate?: string;
 }
@@ -8,6 +9,7 @@ interface MyCertCardProps {
 const MyCertCard = ({
   name,
   authority,
+  certNum,
   passingDate,
   expirationDate,
 }: MyCertCardProps) => {
@@ -17,6 +19,7 @@ const MyCertCard = ({
         <div>
           <h2 className="text-2xl font-extrabold text-slate-900">{name}</h2>
           <p className="mt-2 text-base text-slate-500">{authority}</p>
+          <p className="mt-2 text-sm text-slate-500">자격증 번호: {certNum}</p>
         </div>
       </div>
 
