@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import type { Schedule } from "../../types/exam";
 import { getSchedules } from "../../api/schedule";
 import { mapSchedulesToEvents } from "../../utils/calendar";
+import styles from './CalendarPage.module.css'
 
 function CalendarPage() {
     const [schedules, setSchedules] = useState<Schedule[]>([]);
@@ -37,7 +38,7 @@ function CalendarPage() {
     if (error) return <div>{error}</div>
 
     return (
-        <div>
+        <div className={styles.container}>
             <FullCalendar
                 plugins={[dayGridPlugin]}
                 initialView="dayGridMonth"
