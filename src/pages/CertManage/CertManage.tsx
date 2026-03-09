@@ -2,7 +2,7 @@ import MyCertCard from "../../components/common/cards/MyCertCard";
 import MyWishlistCard, {
   WISHLIST_CARD_TYPE,
 } from "../../components/common/cards/MyWishlistCard";
-import { Award, Bookmark, type LucideIcon } from "lucide-react";
+import { Award, Bookmark } from "lucide-react";
 
 function CertManage() {
   return (
