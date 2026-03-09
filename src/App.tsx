@@ -5,6 +5,7 @@ import SchedulePage from './pages/Calendar/CalendarPage'
 import Header from './components/layout/Header/Header'
 import CertManage from './pages/CertManage/CertManage'
 import CertSearch from './pages/CertSearch/CertSearch'
+import MyPage from './pages/MyPage/MyPage'
 
 function App() {
 
@@ -19,6 +20,7 @@ function App() {
         <Route path="/calendar" element={<SchedulePage/>}/>
         <Route path="/cert-manage" element={<CertManage/>}/>
         <Route path="/cert-search" element={<CertSearch/>}/>
+        <Route path="/mypage" element={<MyPage/>}/>
       </Routes>
     </div>
   )
