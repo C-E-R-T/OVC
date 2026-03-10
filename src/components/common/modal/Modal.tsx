@@ -48,7 +48,7 @@ const Modal = ({ isOpen, title, children, onClose }: ModalProps) => {
             <X className="h-5 w-5" />
           </button>
         </div>
-
+        {/* 자식요소를 집어넣어주세요 */}
         {children}
       </div>
     </div>,
