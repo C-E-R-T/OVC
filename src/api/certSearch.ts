@@ -1,6 +1,8 @@
 import { apiClient } from "./apiClient";
 import type {
   ApiResponse,
+  CertDetail,
+  CertDetailParams,
   CertPageData,
   CertSearchParams,
 } from "../types/cert";
@@ -31,3 +33,13 @@ export const getCerts = async (
 
   return response.data;
 };
+
+export const getCertDetails = async (
+  params:CertDetailParams
+) : Promise<ApiResponse<CertDetail>> => {
+  const {certId} = params;
+
+  const response = await apiClient.get<ApiResponse<CertDetail>>(`/certs/${certId}`);
+
+  return response.data;
+}

@@ -5,12 +5,17 @@ import { Search } from "lucide-react";
 import { useCertSearch } from "../../hooks/useCertSearch";
 import { useCategory } from "../../hooks/useCategory";
 import Modal from "../../components/common/modal/Modal";
+import { useCertDetail } from "../../hooks/useCertDetail";
 
 function CertSearch() {
   //모달이 열렸다.닫혔다
   const [isModalOpen, setIsModalOpen] = useState(false);
+  //상세조회용 변수
+  const [selectedCertId, setSelectedCertId] = useState<number | null>(null);
 
+  //페이지네이션
   const [page, setPage] = useState(0);
+  //그리드로 볼건지 리스트로 볼건지
   const [viewType, setViewType] = useState("grid");
 
   //입력 중인 값(검색창에 입력한 값)(단순입력)
@@ -21,7 +26,7 @@ function CertSearch() {
   const [keyword, setKeyword] = useState("");
   const [categoryIds, setCategoryIds] = useState<number[]>([]);
 
-  const { data, isLoading, isError } = useCertSearch({
+  const { data: searchData, isLoading:isSearchLoading, isError:isSearchError, } = useCertSearch({
     keyword, //검색어
     categoryIds, //카테고리 ids
     page, //1페이지
@@ -30,7 +35,7 @@ function CertSearch() {
   });
 
   //api로 가져온 애들 null일 경우 빈배열
-  const certs = data?.data.content ?? [];
+  const certs = searchData?.data.content ?? [];
 
   //카테고리를 가져오는 hooks
   const {
@@ -56,6 +61,13 @@ function CertSearch() {
     );
   };
 
+  const handleOpenModal = (certId: number) => {
+    setSelectedCertId(certId);
+    setIsModalOpen(true);
+  };
+
+  const { data:detailData, isLoading:isDetailLoading, isError:isDetailError, } = useCertDetail(selectedCertId);
+
   //input에 입력했던것으로 검색에 적용할 겁니다.
   const handleSearch = () => {
     setKeyword(searchInput);
@@ -63,10 +75,10 @@ function CertSearch() {
     setPage(0); //검색 조건 바뀌면 페이지는 1페이지로
   };
 
-  const totalPages = data?.data.totalPages ?? 0;
-  const currentPage = data?.data.currentPage ?? 0;
-  const isFirst = data?.data.isFirst ?? true;
-  const isLast = data?.data.isLast ?? true;
+  const totalPages = searchData?.data.totalPages ?? 0;
+  const currentPage = searchData?.data.currentPage ?? 0;
+  const isFirst = searchData?.data.isFirst ?? true;
+  const isLast = searchData?.data.isLast ?? true;
 
   //totalPages = 5일 때
   //pageNumbers = [0,1,2,3,4]
@@ -91,7 +103,7 @@ function CertSearch() {
   return (
     <div className="flex flex-row">
       {/* 좌측 - 사이드바 영역 */}
-      <div className="w-[320px] h-screen p-[50px] bg-green-100">
+      <div className="w-[320px] h-auto p-[50px] bg-green-100">
         <h3 className="font-medium text-lg mb-6">카테고리</h3>
         <div className="space-y-4">
           {isCategoryLoading && <p>카테고리 불러 오는 중...</p>}
@@ -163,9 +175,9 @@ function CertSearch() {
           </button>
         </div>
 
-        {isLoading && <div>불러오는 중...</div>}
-        {isError && <div>데이터를 불러오지 못했습니다.</div>}
-        {!isLoading && !isError && certs.length === 0 && (
+        {isSearchLoading && <div>불러오는 중...</div>}
+        {isSearchError && <div>데이터를 불러오지 못했습니다.</div>}
+        {!isSearchLoading && !isSearchError && certs.length === 0 && (
           <div className="py-10 text-center text-gray-500">
             조건에 맞는 자격증이 없습니다.
           </div>
@@ -175,7 +187,10 @@ function CertSearch() {
           <div className="flex flex-wrap gap-x-6 gap-y-6 w-full">
             {certs.map((item) => {
               return (
-                <div key={item.certId} onClick={() => setIsModalOpen(true)}>
+                <div
+                  key={item.certId}
+                  onClick={() => handleOpenModal(item.certId)}
+                >
                   <SearchGridCard
                     title={item.name}
                     category={getCategoryName(item.categoryId)}
@@ -199,7 +214,7 @@ function CertSearch() {
                   key={item.certId}
                   //리스트의 마지막
                   className={`p-2 ${!isLast ? "border-b border-gray-200" : ""}`}
-                  onClick={() => setIsModalOpen(true)}
+                  onClick={() => handleOpenModal(item.certId)}
                 >
                   <SearchListCard
                     title={item.name}
@@ -213,7 +228,7 @@ function CertSearch() {
         )}
 
         {totalPages > 1 && (
-          <div contextMenu="flex justify-center items-center gap-2 mt-8">
+          <div className="flex justify-center items-center gap-2 mt-8">
             <button
               onClick={handlePrevPage}
               disabled={isFirst}
@@ -248,8 +263,19 @@ function CertSearch() {
         isOpen={isModalOpen}
         title="자격증 등록"
         onClose={() => setIsModalOpen(false)}
-      >
-        <p>ㅏ하하하하하하</p>
+      >{isDetailLoading && <p>상세정보 불러오는 중...</p>}
+      {isDetailError && <p>상세정보를 불러오지 못했습니다.</p>}
+      {!isDetailLoading && !isDetailError && detailData?.data &&(
+        <div className="space-y-3">
+            <h2 className="text-xl font-bold">{detailData.data.name}</h2>
+            <p>시행기간: {detailData.data.authority}</p>
+            <p>필기 응시료:{detailData.data.writtenFee ?? "미정"}</p>
+            <p>실기 응시료:{detailData.data.practicalFee ?? "미정"}</p>
+            <p>시험 경향:{detailData.data.examTrend}</p>
+            <p>취득 방법:{detailData.data.acqMethod}</p>
+            <p>주의사항: {detailData.data.precautions}</p>
+        </div>
+      )}
       </Modal>
     </div>
   );
