@@ -20,7 +20,7 @@ function CalendarPage() {
                 const month = today.getMonth() + 1;
                 const data = await getSchedules(year, month); //api 호출
                 setSchedules(data); //상태 저장
-            } catch (err) { 
+            } catch (err) {
                 console.error("일정 불러오기 에러:", err);
                 setError("일정 데이터를 불러오는데 실패했습니다.");
             } finally {
@@ -50,7 +50,7 @@ function CalendarPage() {
                     initialView="dayGridMonth"
                     events={async (info, successCallback, failureCallback) => {
                         try {
-                          //info에는 현재 캘린더 화면 범위가 들어감
+                            //info에는 현재 캘린더 화면 범위가 들어감
                             const start = info.start;
                             const year = start.getFullYear();
                             const month = start.getMonth() + 1;
@@ -66,6 +66,18 @@ function CalendarPage() {
                             failureCallback(err instanceof Error ? err : new Error("Unkown Error"));
                         }
                     }}
+
+                    eventClassNames={(arg) => {
+                        const type = arg.event.extendedProps.eventType;
+
+                        if (type === "APPLY") return ["event-apply"]; //FullCalendar의 공식 타입 정의 = eventClassNames → string[]
+                        if (type == "EXAM") return ["event-exam"];
+                        if (type == "RESULT") return ["event-result"];
+
+                        return [];
+
+                    }}
+
                     height="auto"
 
                     //이벤트 시간 표시 여부
