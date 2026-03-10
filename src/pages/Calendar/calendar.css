@@ -92,3 +92,22 @@
   font-weight: 500;
   color: #374151;
 }
+
+/* eventType별 색깔 지정 CSS */
+.event-apply {
+  background-color: #3b82f6 !important;
+  border-color: #3b82f6 !important;
+  color: white !important;
+}
+
+.event-exam {
+  background-color: #ef4444 !important;
+  border-color: #ef4444 !important;
+  color: white !important;
+}
+
+.event-result {
+  background-color: #22c55e !important;
+  border-color: #22c55e !important;
+  color: white !important;
+}
