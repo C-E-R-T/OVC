@@ -9,6 +9,8 @@ function Header() {
             <Link to="/cert-manage" className={styles.link}>자격증 관리</Link>
             <Link to="/cert-search" className={styles.link}>자격증 탐색</Link>
             <div className={styles.mypage}>
+                <Link to="/login" className={styles.link}>로그인</Link>
+                <Link to="/signup" className={styles.link}>회원가입</Link>
                 <Link to="/mypage" className={styles.link}>마이페이지</Link>
             </div>
         </div>
