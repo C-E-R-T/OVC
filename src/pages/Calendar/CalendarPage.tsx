@@ -1,11 +1,10 @@
 import FullCalendar from "@fullcalendar/react"
 import dayGridPlugin from "@fullcalendar/daygrid";
-import { useMemo } from "react";
-import { useState } from "react";
+import { useMemo, useState, useCallback } from "react";
 import { type Certificate, type CalendarEventType } from "../../types/exam";
 import { getSchedules } from "../../api/schedule";
 import { mapSchedulesToEvents } from "../../utils/calendar";
-import type { EventApi } from "@fullcalendar/core";
+import type { EventApi, EventClickArg, EventContentArg } from "@fullcalendar/core";
 import { getCertificates } from "../../api/certificate";
 import './calendar.css'
 import { useQuery } from "@tanstack/react-query";
@@ -40,6 +39,33 @@ function CalendarPage() {
         return mapSchedulesToEvents(schedules);
     }, [schedules]);
 
+    const handleEventClick= useCallback(async (info: EventClickArg)=>{
+        const props = info.event.extendedProps as CalendarEventType["extendedProps"];
+
+                        setSelectedSchedule(props);
+                        setSelectedEvent(info.event);
+
+                        try {
+                            //extendedProps에 있는 scheduleId를 이용해서 해당 자격증 정보를 서버에서 가져옴
+                            const certData = await getCertificates(props.scheduleId);
+                            setCertificate(certData);
+
+                        } catch (error) {
+                            console.error("자격증 정보 불러오기 실패", error);
+                        }
+
+    },[]);
+
+    const handleEventClassNames=useCallback((arg: EventContentArg)=> {
+        const type = arg.event.extendedProps.eventType;
+
+                        if (type === "APPLY") return ["event-apply"]; //FullCalendar의 공식 타입 정의 = eventClassNames → string[]
+                        if (type == "EXAM") return ["event-exam"];
+                        if (type == "RESULT") return ["event-result"];
+
+                        return [];
+    },[]);
+
     if (isLoading) return <div>일정을 불러오는 중...</div>
     if (error) return <div>일정 데이터를 불러오는데 실패했습니다.</div>
 
@@ -54,35 +80,8 @@ function CalendarPage() {
                     plugins={[dayGridPlugin]} //캘린더의 격자형 월 화면으로 달력을 나타내줌
                     initialView="dayGridMonth"
                     events={events}
-
-                    eventClick={async (info) => {
-                        //extendedProps는 CalendarEventType의 extendedProps 타입임을 알려주는 코드
-                        const props = info.event.extendedProps as CalendarEventType["extendedProps"];
-
-                        setSelectedSchedule(props);
-                        setSelectedEvent(info.event);
-
-                        try {
-                            //extendedProps에 있는 scheduleId를 이용해서 해당 자격증 정보를 서버에서 가져옴
-                            const certData = await getCertificates(props.scheduleId);
-                            setCertificate(certData);
-
-                        } catch (error) {
-                            console.error("자격증 정보 불러오기 실패", error);
-                        }
-                    }}
-
-                    eventClassNames={(arg) => {
-                        const type = arg.event.extendedProps.eventType;
-
-                        if (type === "APPLY") return ["event-apply"]; //FullCalendar의 공식 타입 정의 = eventClassNames → string[]
-                        if (type == "EXAM") return ["event-exam"];
-                        if (type == "RESULT") return ["event-result"];
-
-                        return [];
-
-                    }}
-
+                    eventClick={handleEventClick}
+                    eventClassNames={handleEventClassNames}
                     height="auto"
 
                     //이벤트 시간 표시 여부
@@ -98,6 +97,7 @@ function CalendarPage() {
                     }}
                 />
             </div>
+
             {/* 우측 - 자격증 상세정보 */}
             {selectedEvent && (
                 <div className="flex w-[400px] h-screen bg-green-100">
