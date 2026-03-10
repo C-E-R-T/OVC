@@ -35,8 +35,14 @@ const categories = ["IT/기술", "경영/비즈니스", "금융/회계", "외국
 
 function CertSearch() {
   const [viewType, setViewType] = useState("grid");
-  const [search, setSearch] = useState("");
+
+  //입력 중인 값(검색창에 입력한 값)(단순입력)
+  const [searchInput, setSearchInput] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+
+  //실제 검색에 적용된 값(엔터를 눌렀을 경우나 검색버튼을 클릭했을때 적용되는 값)
+  const [appliedSearch, setAppliedSearch] = useState("");
+  const [appliedCategories, setAppliedCategories] = useState<string[]>([]);
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategories((prev) =>
@@ -46,17 +52,23 @@ function CertSearch() {
     );
   };
 
+  //input에 입력했던것으로 검색에 적용할 겁니다.
+  const handleSearch = () => {
+    setAppliedSearch(searchInput);
+    setAppliedCategories(selectedCategories);
+  };
+
   //카테고리를 하나도 안 체크하면 전체 허용
   //체크된 카테고리가 있으면 해당 카테고리만 허용
   const filteredItems = items.filter((item) => {
     const matchesCategory =
-      selectedCategories.length === 0 ||
-      selectedCategories.includes(item.category);
+      appliedCategories.length === 0 ||
+      appliedCategories.includes(item.category);
 
     //검색어는 제목 | 설명으로도 검색가능
     const matchesSearch =
-      item.title.toLowerCase().includes(search.toLowerCase()) ||
-      item.description.toLowerCase().includes(search.toLowerCase());
+      item.title.toLowerCase().includes(appliedSearch.toLowerCase()) ||
+      item.description.toLowerCase().includes(appliedSearch.toLowerCase());
 
     return matchesCategory && matchesSearch;
   });
@@ -116,17 +128,23 @@ function CertSearch() {
             className="w-full outline-none"
             type="text"
             placeholder="자격증 검색..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleSearch();
+              }
+            }}
           />
           <button
-            onClick={() => console.log("검색")}
+            onClick={handleSearch}
             className="p-2 rounded hover:bg-gray-200 transition"
           >
             <Search size={20} />
           </button>
         </div>
 
+        {/* 필터된 애가 없으면 */}
         {filteredItems.length === 0 && (
           <div className="py-10 text-center text-gray-500">
             조건에 맞는 자격증이 없습니다.
