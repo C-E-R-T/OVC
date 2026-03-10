@@ -31,9 +31,35 @@ const items: Item[] = [
   },
 ];
 
+const categories = ["IT/기술", "경영/비즈니스", "금융/회계", "외국어"];
+
 function CertSearch() {
   const [viewType, setViewType] = useState("grid");
   const [search, setSearch] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategories((prev) =>
+      prev.includes(category)
+        ? prev.filter((item) => item !== category)
+        : [...prev, category],
+    );
+  };
+
+  //카테고리를 하나도 안 체크하면 전체 허용
+  //체크된 카테고리가 있으면 해당 카테고리만 허용
+  const filteredItems = items.filter((item) => {
+    const matchesCategory =
+      selectedCategories.length === 0 ||
+      selectedCategories.includes(item.category);
+
+    //검색어는 제목 | 설명으로도 검색가능
+    const matchesSearch =
+      item.title.toLowerCase().includes(search.toLowerCase()) ||
+      item.description.toLowerCase().includes(search.toLowerCase());
+
+    return matchesCategory && matchesSearch;
+  });
 
   return (
     <div className="flex flex-row">
@@ -41,25 +67,20 @@ function CertSearch() {
       <div className="w-[320px] h-screen p-[50px] bg-green-100">
         <h3 className="font-medium text-lg mb-6">카테고리</h3>
         <div className="space-y-4">
-          <label className="flex items-center gap-3 cursor-pointer">
-            <input type="checkbox" className="w-5 h-5 accent-green-600" />
-            <span className="text-gray-700 font-medium">IT/기술</span>
-          </label>
-
-          <label className="flex items-center gap-3 cursor-pointer">
-            <input type="checkbox" className="w-5 h-5 accent-green-600" />
-            <span className="text-gray-700 font-medium">경영/비즈니스</span>
-          </label>
-
-          <label className="flex items-center gap-3 cursor-pointer">
-            <input type="checkbox" className="w-5 h-5 accent-green-600" />
-            <span className="text-gray-700 font-medium">금융/회계</span>
-          </label>
-
-          <label className="flex items-center gap-3 cursor-pointer">
-            <input type="checkbox" className="w-5 h-5 accent-green-600" />
-            <span className="text-gray-700 font-medium">외국어</span>
-          </label>
+          {categories.map((category) => (
+            <label
+              key={category}
+              className="flex items-center gap-3 cursor-pointer"
+            >
+              <input
+                type="checkbox"
+                className="w-5 h-5 accent-green-600"
+                checked={selectedCategories.includes(category)}
+                onChange={() => handleCategoryChange(category)}
+              />
+              <span className="text-gray-700 font-medium">{category}</span>
+            </label>
+          ))}
         </div>
       </div>
       {/* 우측 - 카드 영역 */}
@@ -92,7 +113,7 @@ function CertSearch() {
         </div>
         <div className="flex w-full border border-black-200 justify-between px-6 py-5 rounded-xl mb-[24px] gap-2">
           <input
-            className="w-full"
+            className="w-full outline-none"
             type="text"
             placeholder="자격증 검색..."
             value={search}
@@ -106,9 +127,16 @@ function CertSearch() {
           </button>
         </div>
 
-        {viewType === "grid" && (
+        {filteredItems.length === 0 && (
+          <div className="py-10 text-center text-gray-500">
+            조건에 맞는 자격증이 없습니다.
+          </div>
+        )}
+
+        {/* 필터아이템의 길이가 0보다 클때 그리드화 */}
+        {viewType === "grid" && filteredItems.length > 0 && (
           <div className="flex flex-wrap gap-x-6 gap-y-6 w-full">
-            {items.map((item) => {
+            {filteredItems.map((item) => {
               return (
                 <div key={item.id}>
                   <SearchGridCard
@@ -122,10 +150,11 @@ function CertSearch() {
           </div>
         )}
 
-        {viewType === "list" && (
+        {/* 필터아이템의 길이가 0보다 클때 리스트화 */}
+        {viewType === "list" && filteredItems.length > 0 && (
           <div className="overflow-hidden rounded-3xl border border-gray-200 bg-white">
-            {items.map((item, index) => {
-              const isLast = index === items.length - 1;
+            {filteredItems.map((item, index) => {
+              const isLast = index === filteredItems.length - 1;
 
               return (
                 // 리스트를 감싸는 div
