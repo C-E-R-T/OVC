@@ -4,8 +4,7 @@ import SearchListCard from "../../components/common/cards/SearchListCard";
 import { Search } from "lucide-react";
 import { useCertSearch } from "../../hooks/useCertSearch";
 import { useCategory } from "../../hooks/useCategory";
-import Modal from "../../components/common/modal/Modal";
-import { useCertDetail } from "../../hooks/useCertDetail";
+import CertDetailModal from "../../components/common/modal/CertDetailModal";
 
 function CertSearch() {
   //모달이 열렸다.닫혔다
@@ -66,7 +65,6 @@ function CertSearch() {
     setIsModalOpen(true);
   };
 
-  const { data:detailData, isLoading:isDetailLoading, isError:isDetailError, } = useCertDetail(selectedCertId);
 
   //input에 입력했던것으로 검색에 적용할 겁니다.
   const handleSearch = () => {
@@ -259,24 +257,12 @@ function CertSearch() {
           </div>
         )}
       </div>
-      <Modal
+      <CertDetailModal
         isOpen={isModalOpen}
-        title="자격증 등록"
-        onClose={() => setIsModalOpen(false)}
-      >{isDetailLoading && <p>상세정보 불러오는 중...</p>}
-      {isDetailError && <p>상세정보를 불러오지 못했습니다.</p>}
-      {!isDetailLoading && !isDetailError && detailData?.data &&(
-        <div className="space-y-3">
-            <h2 className="text-xl font-bold">{detailData.data.name}</h2>
-            <p>시행기간: {detailData.data.authority}</p>
-            <p>필기 응시료:{detailData.data.writtenFee ?? "미정"}</p>
-            <p>실기 응시료:{detailData.data.practicalFee ?? "미정"}</p>
-            <p>시험 경향:{detailData.data.examTrend}</p>
-            <p>취득 방법:{detailData.data.acqMethod}</p>
-            <p>주의사항: {detailData.data.precautions}</p>
-        </div>
-      )}
-      </Modal>
+        certId={selectedCertId}
+        onClose={()=>setIsModalOpen(false)}
+        />
+
     </div>
   );
 }
