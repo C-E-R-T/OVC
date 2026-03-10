@@ -45,6 +45,7 @@ const WISHLIST_CARD_CONFIG: Record<WishlistCardType, WishlistCardConfig> = {
     label: "시험발표일",
     badgeClassName: "bg-violet-600 text-base text-white",
     datePrefix: "시험발표일:",
+    buttonText: "결과 확인",
     icon: CalendarDays,
   },
 };
@@ -86,7 +87,7 @@ function getDayStatus(startDate: string, endDate: string) {
 
     return {
       text: `D-${diffDays}`,
-      className: "text-slate-400",
+      className: "text-green-400",
     };
   }
 
@@ -138,7 +139,7 @@ const MyWishlistCard = ({
         <button
           type="button"
           onClick={onClick}
-          className="mt-6 w-full rounded-2xl bg-green-900 py-3 font-bold text-white"
+          className="mt-6 w-full rounded-2xl bg-green-700 py-3 font-bold text-white"
         >
           {config.buttonText}
         </button>
