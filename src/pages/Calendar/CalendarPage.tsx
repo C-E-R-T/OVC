@@ -6,6 +6,7 @@ import { getSchedules } from "../../api/schedule";
 import { mapSchedulesToEvents } from "../../utils/calendar";
 import type { EventApi, EventClickArg, EventContentArg } from "@fullcalendar/core";
 import { getCertificates } from "../../api/certificate";
+import { IoCloseSharp } from "react-icons/io5";
 import './calendar.css'
 import { useQuery } from "@tanstack/react-query";
 
@@ -115,7 +116,6 @@ function CalendarPage() {
                         ) : (<p>일정을 선택하세요.</p>)}
                         {certificate && (
                             <div style={{ border: "3px solid red" }}>
-                                <h2>{certificate.name}</h2>
                                 <p>발급 기관: {certificate.authority}</p>
                                 <p>출제 경향: {certificate.examTrend}</p>
                                 <p>취득 방법: {certificate.acqMethod}</p>
@@ -127,7 +127,8 @@ function CalendarPage() {
                         )}
                     </div>
                     <div>
-                        <button onClick={() => setSelectedEvent(null)}>X</button>
+                        {/* 닫기 버튼 */}
+                        <button onClick={() => setSelectedEvent(null)}><IoCloseSharp /></button>
                     </div>
                 </div>
             )}

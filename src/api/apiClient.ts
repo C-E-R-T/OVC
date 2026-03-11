@@ -11,11 +11,12 @@ export const apiClient = axios.create({
 });
 
 //요청을 보내기 전에 실행됨
-apiClient.interceptors.request.use((config)=> {
-  const token =localStorage.getItem("accessToken");
+apiClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem("accessToken");
 
-  if(token){
-    config.headers.Authorization=`Bearer ${token}`;
+  // auth 요청에는 토큰 붙이지 않음
+  if (token && !config.url?.includes("/auth")) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
 
   return config;
