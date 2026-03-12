@@ -4,7 +4,7 @@ import { useMemo, useState, useCallback } from "react";
 import { type Certificate, type Schedule } from "../../types/exam";
 import { getSchedules } from "../../api/schedule";
 import { mapSchedulesToEvents } from "../../utils/calendar";
-import type { EventApi, EventClickArg, EventContentArg, DatesSetArg } from "@fullcalendar/core";
+import type { EventApi, EventClickArg, EventContentArg } from "@fullcalendar/core";
 import { getCertificates } from "../../api/certificate";
 import { IoCloseSharp } from "react-icons/io5";
 import './calendar.css'
@@ -75,11 +75,6 @@ function CalendarPage() {
 
         return [];
 
-    }, []);
-
-    // 캘린더 월 이동 감지
-    const handleDatesSet = useCallback((info: DatesSetArg) => {
-        setCurrentDate(info.start);
     }, []);
 
     // 모달용 일정
