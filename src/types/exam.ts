@@ -16,8 +16,8 @@ export type Schedule = {
   scheduleId: number;
   certificateName: string;
   examName: string;
-  examType: string; //실기, 필기
-  eventType: string; //지원일, 시험일, 결과일
+  examType: string; //실기, 필기 - {WRITTEN, PRACTIVCAL}
+  eventType: string; //지원일, 시험일, 결과일 - {APPLY, EXAM, RESULT}
   startDate: string;
   endDate: string;
   exam_round: string; //회차 정보

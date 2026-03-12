@@ -1,15 +1,8 @@
-import { useState } from "react";
-import { login } from "../../api/auth";
-
 function LoginPage() {
-
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
 
     const handleNaverLogin = () => {
         try {
-            window.location.href = "http://localhost:8080/login/oauth2/code/naver";
-            alert("로그인 성공!");
+            window.location.href = "http://localhost:8080/oauth2/authorization/naver";
         } catch (error) {
             console.log("로그인 오류 발생", error);
             alert("로그인 실패!");
@@ -26,22 +19,6 @@ function LoginPage() {
                 </h1>
 
                 <div className="flex flex-col gap-4">
-
-                    <input
-                        type="email"
-                        className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-                        placeholder="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-
-                    <input
-                        type="password"
-                        className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
-                        placeholder="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
 
                     <button
                         onClick={handleNaverLogin}

@@ -14,7 +14,7 @@ export function mapSchedulesToEvents(
 ): CalendarEventType[] {
   const events = schedules.map((schedule) => {
     const event = {
-      id: String(schedule.scheduleId),
+     id: `${schedule.scheduleId}-${schedule.eventType}`,
 
       title: `${schedule.certificateName} ${schedule.eventType}`,
 
@@ -25,14 +25,7 @@ export function mapSchedulesToEvents(
       // allDay가 없다면 캘린더가 시간 이벤트라고 간주하기 때문에, 캘린더에 날짜만 표시해주기 위함 -> true일 경우 시간을 무시
       allDay: true,
 
-      extendedProps: {
-        scheduleId: schedule.scheduleId,
-        certificateName: schedule.certificateName,
-        examType: schedule.examType,
-        eventType: schedule.eventType,
-        startDate: schedule.startDate.slice(0, 10),
-        endDate: schedule.endDate,
-      },
+      extendedProps: schedule
     };
 
     return event;
