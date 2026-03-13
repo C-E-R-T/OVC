@@ -39,7 +39,7 @@ export const getCertDetails = async (
 ) : Promise<ApiResponse<CertDetail>> => {
   const {certId} = params;
 
-  const response = await apiClient.get<ApiResponse<CertDetail>>(`/certs/${certId}`);
+  const response = await apiClient.get<ApiResponse<CertDetail>>(`/api/certs/${certId}`);
 
   return response.data;
 }
