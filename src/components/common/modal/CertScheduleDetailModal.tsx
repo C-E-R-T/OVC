@@ -8,8 +8,10 @@ interface Props {
 }
 
 function CertScheduleDetailModal({ isOpen, onClose, schedules }: Props) {
+  if(!isOpen) return null;
   if (!schedules || schedules.length === 0) return <div>일정이 없습니다.</div>
   console.log("모달 schedules:", schedules);
+
   return (
     <Modal
       isOpen={isOpen}
