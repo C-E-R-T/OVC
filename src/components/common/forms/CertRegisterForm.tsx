@@ -1,6 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getCategory } from "../../../api/category";
+import type { SettingCategory } from "../../../types/category";
 
 interface CertRegisterFormValues {
+  categoryId?: number;
   name: string;
   authority: string;
   certNum?: string;
@@ -10,51 +13,91 @@ interface CertRegisterFormValues {
 
 interface CertRegisterFormProps {
   onClose: () => void;
-  onCreate:(values: CertRegisterFormValues) => void;
+  onCreate: (values: CertRegisterFormValues) => void;
 }
 
 const CertRegisterForm = ({ onClose, onCreate }: CertRegisterFormProps) => {
-    const [form,setForm] = useState<CertRegisterFormValues>({
-        name: "",
-        authority: "",
-        certNum: "",
-        passingDate: "",
-        expirationDate: "",
-    });
+  const [categories, setCategories] = useState<SettingCategory[]>([]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>)=>{
-        const {name,value} =e.target;
+  const [form, setForm] = useState<CertRegisterFormValues>({
+    categoryId: undefined,
+    name: "",
+    authority: "",
+    certNum: "",
+    passingDate: "",
+    expirationDate: "",
+  });
 
-        setForm((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await getCategory();
+        setCategories(res.data);
+      } catch (error) {
+        console.error("카테고리 조회 실패", error);
+      }
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+    fetchCategories();
+  }, []);
 
-        if(!form.name.trim()){
-            alert("자격증명을 입력해주세요.");
-            return;
-        }
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
 
-        if(!form.authority.trim()){
-            alert("발급 기관을 입력해주세요.");
-            return;
-        }
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
-        if(!form.passingDate){
-            alert("합격일을 입력해주세요.");
-            return;
-        }
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-        onCreate(form);
-        onClose();
-    };
+    if (!form.name.trim()) {
+      alert("자격증명을 입력해주세요.");
+      return;
+    }
+
+    if (!form.authority.trim()) {
+      alert("발급 기관을 입력해주세요.");
+      return;
+    }
+
+    if (!form.passingDate) {
+      alert("합격일을 입력해주세요.");
+      return;
+    }
+
+    onCreate(form);
+    onClose();
+  };
+
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
       <div>
+        <label className="mb-1 block text-sm font-medium text-slate-700">
+          카테고리
+        </label>
+
+        <select
+          value={form.categoryId ?? ""}
+          className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-green-700"
+          onChange={(e) =>
+            setForm((prev) => ({
+              ...prev,
+              categoryId: Number(e.target.value),
+            }))
+          }
+        >
+          <option value="">카테고리 선택</option>
+
+          {categories.map((category) => (
+            <option key={category.id} value={category.id}>
+              {category.name}
+            </option>
+          ))}
+        </select>
+
         <label className="mb-1 block text-sm font-medium text-slate-700">
           자격증명
         </label>
@@ -81,7 +124,7 @@ const CertRegisterForm = ({ onClose, onCreate }: CertRegisterFormProps) => {
           className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-green-700"
         />
       </div>
-      
+
       <div>
         <label className="mb-1 block text-sm font-medium text-slate-700">
           자격증 번호
@@ -142,4 +185,4 @@ const CertRegisterForm = ({ onClose, onCreate }: CertRegisterFormProps) => {
 };
 
 export default CertRegisterForm;
-export type {CertRegisterFormValues};
+export type { CertRegisterFormValues };
