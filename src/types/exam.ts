@@ -14,6 +14,7 @@ export type Certificate = {
 
 export type Schedule = {
   scheduleId: number;
+  certId: number;
   certificateName: string;
   examName: string;
   examType: string; //실기, 필기 - {WRITTEN, PRACTIVCAL}

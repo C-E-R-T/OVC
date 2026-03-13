@@ -6,11 +6,16 @@ function OAuthSuccess(){
 
     useEffect(()=>{
         const params=new URLSearchParams(window.location.search);
+         console.log("URL:", window.location.search);
         const token=params.get("token");
+          console.log("token:", token);
 
         if(token) {
             localStorage.setItem("accessToken",token);
-            navigate("/mypage");
+           
+            setTimeout(()=>{
+                navigate("/mypage");
+            },0);
         }
     },[]);
 

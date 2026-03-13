@@ -2,7 +2,7 @@ import FullCalendar from "@fullcalendar/react"
 import dayGridPlugin from "@fullcalendar/daygrid";
 import { useMemo, useState, useCallback } from "react";
 import { type Certificate, type Schedule } from "../../types/exam";
-import { getSchedules } from "../../api/schedule";
+import { getSchedules, getSchedulesByCertificate } from "../../api/schedule";
 import { mapSchedulesToEvents } from "../../utils/calendar";
 import type { EventApi, EventClickArg, EventContentArg } from "@fullcalendar/core";
 import { getCertificates } from "../../api/certificate";
@@ -33,6 +33,9 @@ function CalendarPage() {
 
     // 모달
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    //일정 상세조회 버튼 클릭 시 모달 전체 일정 조회를 위한 state
+    const [certSchedules, setCertSchedules]=useState<Schedule[]>([]);
 
     // 일정 API 호출
     const { data: schedules = [], isLoading, error } = useQuery({
@@ -78,11 +81,24 @@ function CalendarPage() {
     }, []);
 
     // 모달용 일정
-    const certSchedules = schedules.filter(
-        (schedule) =>
-            schedule.certificateName === selectedSchedule?.certificateName
-    );
+    const handleOpenScheduleModal = async () => {
+        if(!selectedSchedule) return;
 
+        try {
+            const data=await getSchedulesByCertificate (
+                selectedSchedule.certId,
+                year
+            );
+
+            setCertSchedules(data);
+
+            setIsModalOpen(true);
+        } catch(error) {
+            console.log("자격증 전체 일정 불러오기 실패", error);
+            throw error;
+        }
+    }
+  
     if (isLoading) return <div>일정을 불러오는 중...</div>
     if (error) return <div>일정 데이터를 불러오는데 실패했습니다.</div>
 
@@ -147,7 +163,7 @@ function CalendarPage() {
 
                                 <button
                                     className="border border-black-200"
-                                    onClick={() => setIsModalOpen(true)}
+                                    onClick={handleOpenScheduleModal}
                                 >
                                     일정 상세 보기
                                 </button>
