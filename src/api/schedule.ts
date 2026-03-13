@@ -34,7 +34,7 @@ export async function getSchedulesByCertificate(
 ) :Promise<Schedule[]> {
   try {
     const res=await apiClient.get(
-      `calendar/certificate/${certId}`,
+      `/api/calendar/certificate/${certId}`,
       {
         params : {year}
       }
