@@ -6,7 +6,7 @@ export type Certificate = {
   acqMethod: string | null; //취득 방법
   precautions: string | null; //유의 사항
   // description: string | null; //자격증 설명
-  writtenFee: number | null; 
+  writtenFee: number | null;
   practicalFee: number | null;
   category_id: number;
   created_at: string;
@@ -22,6 +22,11 @@ export type Schedule = {
   startDate: string;
   endDate: string;
   exam_round: string; //회차 정보
+  applyStartAt: string;
+  applyEndAt: string;
+  examStartAt: string;
+  examEndAt: string;
+  resultAt: string;
 };
 
 export type CalendarEventType = {
@@ -29,7 +34,7 @@ export type CalendarEventType = {
   title: string;
   start: string;
   end: string;
-  allDay: boolean; 
+  allDay: boolean;
   extendedProps: {
     scheduleId: number;
     certificateName: string;

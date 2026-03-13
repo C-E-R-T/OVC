@@ -55,7 +55,7 @@ function CalendarPage() {
 
         try {
 
-            const certData = await getCertificates(props.scheduleId);
+            const certData = await getCertificates(props.certId);
 
             setCertificate(certData);
             setSelectedSchedule(props);
@@ -84,12 +84,14 @@ function CalendarPage() {
     const handleOpenScheduleModal = async () => {
         if(!selectedSchedule) return;
 
+        console.log("selectedSchedule:", selectedSchedule);
+    console.log("certId:", selectedSchedule?.certId);
+
         try {
             const data=await getSchedulesByCertificate (
                 selectedSchedule.certId,
                 year
             );
-
             setCertSchedules(data);
 
             setIsModalOpen(true);
