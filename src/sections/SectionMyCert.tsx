@@ -1,29 +1,63 @@
 function SectionMyCert() {
-    return (
-        <section className="w-full min-h-screen bg-[#F7FFH4] flex items-center justify-center min-h-screen snap-start">
-            <div className="text-center">
-                {/* 왼쪽 텍스트 */}
-                <div className="max-w-md">
-                    <h2 className="text-2xl font-bold mb-4">
-                        내 자격증 관리 섹션
-                    </h2>
 
-                    <p className="text-gray-800">
-                        ㄴ자격증 시험 일정을 캘린더에서 한눈에 확인하세요.
-                    </p>
+  return (
+    <section className="py-32 bg-primarySoft">
 
-                    <button className="mt-6 px-6 py-2 bg-white rounded-full">
-                        일정 보러가기
-                    </button>
-                </div>
+      <div className="max-w-6xl mx-auto px-6">
 
-                {/* 오른쪽 이미지 */}
-                <div className="w-[400px] h-[300px] bg-gray-300 flex items-center justify-center">
-                    카드 영역
-                </div>
-            </div>
-        </section>
-    );
+        <h2 className="text-3xl font-bold text-center mb-16">
+          기존 자격증 준비의 문제점
+        </h2>
+
+        <div className="bg-white rounded-3xl shadow-xl p-10 grid md:grid-cols-2 gap-10">
+
+          <div>
+            <h3 className="font-semibold mb-3">
+              Strength
+            </h3>
+
+            <p className="text-gray-500">
+              다양한 자격증 시험 존재
+            </p>
+          </div>
+
+          <div>
+            <h3 className="font-semibold mb-3">
+              Weakness
+            </h3>
+
+            <p className="text-gray-500">
+              일정 관리 어려움
+            </p>
+          </div>
+
+          <div>
+            <h3 className="font-semibold mb-3">
+              Opportunity
+            </h3>
+
+            <p className="text-gray-500">
+              자기개발 수요 증가
+            </p>
+          </div>
+
+          <div>
+            <h3 className="font-semibold mb-3">
+              Threat
+            </h3>
+
+            <p className="text-gray-500">
+              정보 분산 문제
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+  )
+
 }
 
 export default SectionMyCert

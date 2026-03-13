@@ -6,7 +6,7 @@ import SectionSearch from "../../sections/SectionSearch"
 
 function HomePage() {
     return (
-        <div className="h-screen overflow-y-scroll snap-y snap-mandatory">
+       <div className="w-full overflow-x-hidden">
             <SectionHero/>
             <SectionCalendar/>
             <SectionSearch/>

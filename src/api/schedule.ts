@@ -3,7 +3,7 @@ import { apiClient } from "./apiClient";
 
 export async function getSchedules(year: number, month: number): Promise<Schedule[]> {
   try {
-    const res = await apiClient.get('/calendar', {
+    const res = await apiClient.get('/api/calendar', {
       params: {
         year: year,
         month: month
