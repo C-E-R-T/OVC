@@ -12,7 +12,6 @@ import { useQuery } from "@tanstack/react-query";
 import CertScheduleDetailModal from "../../components/common/modal/CertScheduleDetailModal";
 
 
-
 function CalendarPage() {
 
     const today = new Date();
