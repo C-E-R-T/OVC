@@ -16,6 +16,7 @@ import {
   getMyCerts,
   type MyCertResponse,
 } from "../../api/user";
+import { deleteFavorite, getFavorites } from "../../api/favorite";
 
 type CertItem = {
   id: number;
@@ -39,6 +40,12 @@ function CertManage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const queryClient = useQueryClient();
 
+  //찜 목록 데이터를 가져옴
+  const {data: favorites = [] } = useQuery({
+    queryKey: ["favorites"],
+    queryFn: getFavorites
+  });
+
   const {
     data: myCerts = [],
     isLoading,
@@ -49,6 +56,8 @@ function CertManage() {
     // 토큰 조건으로 조회를 제한하려면 enabled 옵션을 다시 활성화하면 된다.
     retry: false, // 인증 이슈 시 과도한 재시도 방지
   });
+
+  console.log("favorites 데이터:", favorites);
 
   const certList = myCerts.map(mapMyCertResponse);
 
@@ -106,6 +115,15 @@ function CertManage() {
       alert("자격증 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.");
     }
   };
+
+  const deleteFavoriteMutation = useMutation({
+  mutationFn: (certId: number) => deleteFavorite(certId),
+
+  onSuccess: async () => {
+    await queryClient.invalidateQueries({ queryKey: ["favorites"] });
+  }
+});
+
   return (
     <div className="p-10">
       <div className="flex items-start justify-between">
@@ -164,39 +182,19 @@ function CertManage() {
               <Bookmark className="h-5 w-5" />
               <p className="font-semibold">내 찜 목록</p>
             </div>
-            <div className="rounded-xl bg-gray-300 px-3 py-1 text-sm text-gray-600">
-              5개 항목
-            </div>
           </div>
           <div className="flex justify-center"></div>
-          <div className="grid grid-cols-2 gap-x-6 gap-y-4 mx-auto w-fit">
-            <MyWishlistCard
+          <div className="grid grid-cols-2 gap-6 mx-auto max-w-[1000px]">
+            {favorites.map((item) => (
+              <MyWishlistCard
+              key={item.certId}
               type={WISHLIST_CARD_TYPE.APPLY}
-              title="TOEIC Listening & Reading"
-              startDate="2026-03-01"
-              endDate="2026-03-15"
-              onClick={() => console.log("시험 신청")}
-            />
-            <MyWishlistCard
-              type={WISHLIST_CARD_TYPE.APPLY}
-              title="TOEIC Speaking"
-              startDate="2026-03-10"
-              endDate="2026-03-15"
-              onClick={() => console.log("시험 신청")}
-            />
-            <MyWishlistCard
-              type={WISHLIST_CARD_TYPE.EXAM}
-              title="TOEIC Listening & Reading"
-              startDate="2026-03-15"
-              endDate="2026-03-15"
-              onClick={() => console.log("시험일")}
-            />
-            <MyWishlistCard
-              type={WISHLIST_CARD_TYPE.RESULT}
-              title="TOEIC Listening & Reading"
-              startDate="2026-03-09"
-              endDate="2026-03-09"
-            />
+              title={item.title}
+              startDate={item.startDate}
+              endDate={item.endDate}
+              onDelete={() => deleteFavoriteMutation.mutate(item.certId)}
+              />
+            ))}
           </div>
         </section>
       </div>

@@ -2,9 +2,11 @@ interface SearchListCardProps {
   title: string;
   category: string;
   description: string;
+  onScheduleClick?: () => void;
 }
 
-function SearchListCard({ title, category, description }: SearchListCardProps) {
+function SearchListCard({ title, category, description, onScheduleClick }: SearchListCardProps) {
+  console.log("onScheduleClick:", onScheduleClick);
   return (
     <div className="w-full flex bg-white overflow-hidden">
       {/* 좌측 영역 */}
@@ -36,7 +38,9 @@ function SearchListCard({ title, category, description }: SearchListCardProps) {
 
       {/* 우측 영역 */}
       <div className="flex flex-col border-gray-100 p-4 flex items-center">
-        <button className="w-[160px] h-[50px] bg-green-700 text-gray-100 px-5 py-2 mb-2 rounded-lg font-medium hover:bg-green-200 transition">
+        <button
+          onClick={onScheduleClick}
+          className="w-[160px] h-[50px] bg-green-700 text-gray-100 px-5 py-2 mb-2 rounded-lg font-medium hover:bg-green-200 transition">
           일정 보기
         </button>
 

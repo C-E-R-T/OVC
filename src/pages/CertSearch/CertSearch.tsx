@@ -25,7 +25,7 @@ function CertSearch() {
   const [keyword, setKeyword] = useState("");
   const [categoryIds, setCategoryIds] = useState<number[]>([]);
 
-  const { data: searchData, isLoading:isSearchLoading, isError:isSearchError, } = useCertSearch({
+  const { data: searchData, isLoading: isSearchLoading, isError: isSearchError, } = useCertSearch({
     keyword, //검색어
     categoryIds, //카테고리 ids
     page, //1페이지
@@ -187,12 +187,13 @@ function CertSearch() {
               return (
                 <div
                   key={item.certId}
-                  onClick={() => handleOpenModal(item.certId)}
                 >
                   <SearchGridCard
+                    certId={item.certId}
                     title={item.name}
                     category={getCategoryName(item.categoryId)}
                     description={item.description ?? ""}
+                    onScheduleClick={() => handleOpenModal(item.certId)}
                   />
                 </div>
               );
@@ -212,12 +213,14 @@ function CertSearch() {
                   key={item.certId}
                   //리스트의 마지막
                   className={`p-2 ${!isLast ? "border-b border-gray-200" : ""}`}
-                  onClick={() => handleOpenModal(item.certId)}
                 >
                   <SearchListCard
                     title={item.name}
                     category={getCategoryName(item.categoryId)}
                     description={item.description ?? ""}
+                    onScheduleClick={()=>{
+                      console.log("선택된 certId:", item.certId);
+                      handleOpenModal(item.certId)}}
                   />
                 </div>
               );
@@ -238,11 +241,10 @@ function CertSearch() {
               <button
                 key={pageNumber}
                 onClick={() => handlePageClick(pageNumber)}
-                className={`px-3 py-2 border rounded ${
-                  currentPage === pageNumber
+                className={`px-3 py-2 border rounded ${currentPage === pageNumber
                     ? "bg-black text-white"
                     : "bg-white"
-                }`}
+                  }`}
               >
                 {pageNumber + 1}
               </button>
@@ -260,8 +262,8 @@ function CertSearch() {
       <CertDetailModal
         isOpen={isModalOpen}
         certId={selectedCertId}
-        onClose={()=>setIsModalOpen(false)}
-        />
+        onClose={() => setIsModalOpen(false)}
+      />
 
     </div>
   );
