@@ -1,13 +1,15 @@
 import { CalendarDays, type LucideIcon } from "lucide-react";
 
+//카드의 종류 정의
 export const WISHLIST_CARD_TYPE = {
   APPLY: "APPLY",
   EXAM: "EXAM",
   RESULT: "RESULT",
-} as const; // as const로 인해 enum타입으로 선언 가능.
+} as const;
 
 export type WishlistCardType =
-  typeof WISHLIST_CARD_TYPE[keyof typeof WISHLIST_CARD_TYPE]; //Map처럼 키밸류값 사용
+//type에 들어올 수 있는 값의 범위를 제한(APPLY, EXAM, RESULT의 값만을 허용)
+  typeof WISHLIST_CARD_TYPE[keyof typeof WISHLIST_CARD_TYPE];
 
 interface MyWishlistCardProps {
   type: WishlistCardType;
@@ -15,6 +17,7 @@ interface MyWishlistCardProps {
   startDate: string;
   endDate: string;
   onClick?: () => void;
+  onDelete?: () => void;
 }
 
 interface WishlistCardConfig {
@@ -22,48 +25,47 @@ interface WishlistCardConfig {
   badgeClassName: string;
   datePrefix: string;
   buttonText?: string;
-  icon: LucideIcon;// import type LucideIcon으로 가져온 타입
+  icon: LucideIcon;
 }
 
+//카드 타입에 따라 표시되는 UI 정보 저장
 const WISHLIST_CARD_CONFIG: Record<WishlistCardType, WishlistCardConfig> = {
-    //wishlist_card_type에 속한 객체
   APPLY: {
     label: "시험신청일",
-    badgeClassName: "bg-blue-500 text-base text-white",
-    datePrefix: "시험신청일:",
+    badgeClassName: "bg-blue-500 text-white",
+    datePrefix: "시험신청일",
     buttonText: "시험 신청하러가기",
     icon: CalendarDays,
   },
   EXAM: {
     label: "시험일",
-    badgeClassName: "bg-emerald-700 text-base text-white",
-    datePrefix: "시험일:",
+    badgeClassName: "bg-emerald-600 text-white",
+    datePrefix: "시험일",
     buttonText: "수험표 확인",
     icon: CalendarDays,
   },
   RESULT: {
     label: "시험발표일",
-    badgeClassName: "bg-violet-600 text-base text-white",
-    datePrefix: "시험발표일:",
+    badgeClassName: "bg-violet-600 text-white",
+    datePrefix: "시험발표일",
     buttonText: "결과 확인",
     icon: CalendarDays,
   },
 };
 
-
-//백에서 date를 string으로 받는데 그것을 Date 타입으로 변경
+//시간 제거하는 함수 -> 날짜만 표시되도록
 function toDateOnly(dateString: string) {
   const date = new Date(dateString);
   return new Date(date.getFullYear(), date.getMonth(), date.getDate());
 }
 
-//기간을 구해주는 함수
+//startDate와 endDate가 같으면 일정을 기간이 아닌 하루로 표시
 function formatDateRange(startDate: string, endDate: string) {
   if (startDate === endDate) return startDate;
   return `${startDate} - ${endDate}`;
 }
 
-//날짜를 가져와서 css와 D-day를 선언해줄거에요
+//디데이 표시하는 함수
 function getDayStatus(startDate: string, endDate: string) {
   const today = new Date();
   const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
@@ -73,28 +75,18 @@ function getDayStatus(startDate: string, endDate: string) {
 
   const isTodayInRange = todayOnly >= start && todayOnly <= end;
 
-  //오늘이 시험신청일/시험일/시험발표일일 경우 아래와 같이 반환
   if (isTodayInRange) {
-    return {
-      text: "D-day",
-      className: "text-red-500",
-    };
+    return { text: "D-day", className: "text-red-500" };
   }
 
   if (todayOnly < start) {
     const diffMs = start.getTime() - todayOnly.getTime();
     const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
 
-    return {
-      text: `D-${diffDays}`,
-      className: "text-green-400",
-    };
+    return { text: `D-${diffDays}`, className: "text-green-500" };
   }
 
-  return {
-    text: "마감",
-    className: "text-slate-400",
-  };
+  return { text: "마감", className: "text-slate-400" };
 }
 
 const MyWishlistCard = ({
@@ -103,47 +95,105 @@ const MyWishlistCard = ({
   startDate,
   endDate,
   onClick,
+  onDelete,
 }: MyWishlistCardProps) => {
-    //시험신청일,시험일,시험발표일에 따라 들어가야 하는 값이 다르기에 해당 내용을 config에 저장
+
+  //카드 타입에 맞는 설정을 가져옴
   const config = WISHLIST_CARD_CONFIG[type];
   const dayStatus = getDayStatus(startDate, endDate);
+  const Icon = config.icon;
 
   return (
-    <article className="w-full max-w-[480px] rounded-[16px] border border-slate-200 bg-white p-10 shadow-sm">
-      <div className="flex items-start justify-between">
+    <article
+      className="
+      relative
+      w-full
+      max-w-[460px]
+      rounded-2xl
+      border
+      border-slate-200
+      bg-gradient-to-br
+      from-white
+      to-slate-50
+      p-8
+      shadow-sm
+      transition
+      hover:-translate-y-1
+      hover:shadow-xl
+      "
+    >
+
+      {/* 삭제 버튼 */}
+      {onDelete && (
+        <button
+          onClick={onDelete}
+          className="absolute top-6 right-6 h-8 w-8 rounded-full bg-red-600 text-sm font-bold text-white hover:bg-red-700"
+        >
+          X
+        </button>
+      )}
+
+      {/* 상단 */}
+      <div className="flex items-start mb-6 gap-3">
+
         <span
-          className={`inline-flex rounded-[16px] px-4 py-2 font-semibold  ${config.badgeClassName}`}
+          className={`
+          px-4
+          py-2
+          text-sm
+          font-semibold
+          rounded-full
+          ${config.badgeClassName}
+          `}
         >
           {config.label}
         </span>
 
-        <span className={`text-2xl font-extrabold ${dayStatus.className}`}>
+        <span className={`text-xl font-extrabold ${dayStatus.className}`}>
           {dayStatus.text}
         </span>
+
       </div>
 
-      <h2 className="mt-10 text-2xl font-extrabold leading-tight text-slate-900">
+      {/* 제목 */}
+      <h2 className="text-2xl font-bold text-slate-900 leading-tight">
         {title}
       </h2>
 
-      <div className={`${config.buttonText ? "mt-20" : "mt-28"} flex items-center gap-3`}>
-        {/* config.icon은 lucide icon을 사용하기 위해서 */}
-        <config.icon className="h-6 w-6 text-slate-500" />
-        <p className="text-xl text-slate-500">
-          {config.datePrefix} {formatDateRange(startDate, endDate)}
-        </p>
+      {/* 날짜 */}
+      <div className="flex items-center gap-3 mt-6 text-slate-500">
+
+        <Icon className="h-5 w-5" />
+
+        <span className="text-base">
+          {config.datePrefix} : {formatDateRange(startDate, endDate)}
+        </span>
+
       </div>
 
-    {/* 버튼텍스트가 있으면 버튼을 나타내라 */}
+      {/* 버튼 */}
       {config.buttonText && (
         <button
           type="button"
           onClick={onClick}
-          className="mt-6 w-full rounded-2xl bg-green-700 py-3 font-bold text-white"
+          className="
+          mt-8
+          w-full
+          rounded-xl
+          bg-green-700
+          py-3
+          font-semibold
+          text-white
+          transition
+          hover:bg-green-800
+          hover:shadow-md
+          active:scale-[0.98]
+          "
         >
           {config.buttonText}
         </button>
       )}
+
     </article>
   );
 };

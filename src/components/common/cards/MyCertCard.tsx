@@ -16,7 +16,7 @@ const MyCertCard = ({
   onDelete,
 }: MyCertCardProps) => {
   return (
-    <article className="w-full rounded-xl border border-slate-200 bg-white p-5 shadow-xl ">
+    <article className="w-full rounded-xl border border-slate-200 bg-white p-5 shadow-xl transition hover:-translate-y-1 hover:shadow-xl">
       <div className="flex items-start justify-between gap-4">
         <div>
           <h2 className="text-2xl font-extrabold text-slate-900">{name}</h2>
