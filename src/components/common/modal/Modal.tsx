@@ -7,9 +7,10 @@ interface ModalProps {
   title?: string;
   children: ReactNode;
   onClose: () => void;
+  panelClassName?: string;
 }
 
-const Modal = ({ isOpen, title, children, onClose }: ModalProps) => {
+const Modal = ({ isOpen, title, children, onClose, panelClassName = "" }: ModalProps) => {
   useEffect(() => {
     if (!isOpen) return;
 
@@ -37,7 +38,7 @@ const Modal = ({ isOpen, title, children, onClose }: ModalProps) => {
         onClick={onClose}
       />
 
-      <div className="relative z-10 w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl">
+      <div className={`relative z-10 w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl ${panelClassName}`}>
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl font-bold text-slate-900">{title}</h2>
           <button
