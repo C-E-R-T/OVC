@@ -41,6 +41,8 @@ function CalendarPage() {
 
     //검색창에 입력하는 값
     const [searchInput, setSearchInput] = useState("");
+    //실제 검색에 반영되는 값(엔터/검색 버튼 시점)
+    const [searchKeyword, setSearchKeyword] = useState("");
 
     // 일정 API 호출
     const { data: schedules = [], isLoading, error } = useQuery({
@@ -48,17 +50,21 @@ function CalendarPage() {
         queryFn: () => getSchedules(year, month)
     });
 
-    //schedules 또는 searchInput이 바뀌면 자동으로 필터 다시 계산
+    const handleSearch = useCallback(() => {
+        setSearchKeyword(searchInput);
+    }, [searchInput]);
+
+    //schedules 또는 searchKeyword가 바뀌면 필터 재계산
     const filteredSchedules = useMemo(() => {
-        if (!searchInput.trim()) return schedules;
+        if (!searchKeyword.trim()) return schedules;
 
         return schedules.filter((schedule) =>
             //자격증 이름에 검색어가 포함되어 있으면 일정을 유지함 
             schedule.certificateName
                 .toLowerCase()
-                .includes(searchInput.toLowerCase())
+                .includes(searchKeyword.toLowerCase())
         );
-    }, [schedules, searchInput])
+    }, [schedules, searchKeyword])
 
     // FullCalendar 이벤트 변환
     const events = useMemo(() => {
@@ -135,8 +141,19 @@ function CalendarPage() {
                             placeholder="일정 검색..."
                             value={searchInput}
                             onChange={(e) => setSearchInput(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                    handleSearch();
+                                }
+                            }}
                         />
-                        <Search size={18} />
+                        <button
+                            type="button"
+                            onClick={handleSearch}
+                            aria-label="검색"
+                        >
+                            <Search size={18} />
+                        </button>
                     </div>
                 </div>
 
