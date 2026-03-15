@@ -41,6 +41,7 @@ const mapMyCertResponse = (cert: MyCertResponse): CertItem => ({
 
 const toDateOnly = (dateString?: string) => {
   if (!dateString) return null;
+  // 시간대 영향 없이 yyyy-mm-dd 기준 비교를 위해 시간 정보를 제거
   const normalized = dateString.split("T")[0];
   const [year, month, day] = normalized.split("-").map(Number);
   if (!year || !month || !day) return null;
@@ -63,6 +64,7 @@ const getEventPriority = (rawType?: string) => {
 };
 
 const getScheduleRange = (schedule: Schedule) => {
+  // 이벤트 타입별 표준 시작/종료 필드를 우선 사용하고, 없으면 공통 필드로 보정
   const type = (schedule.eventType ?? "").toUpperCase();
   const startByType =
     type === "APPLY"
@@ -100,6 +102,7 @@ const getTodayInProgressSchedules = (schedules: Schedule[]) => {
 const getRepresentativeSchedule = (schedules: Schedule[]) => {
   if (schedules.length === 0) return null;
 
+  // 1순위: 오늘 진행 중인 일정(우선순위/종료일 기준 정렬)
   const inProgress = getTodayInProgressSchedules(schedules).sort((a, b) => {
     const aRange = getScheduleRange(a);
     const bRange = getScheduleRange(b);
@@ -116,6 +119,7 @@ const getRepresentativeSchedule = (schedules: Schedule[]) => {
 
   const today = new Date();
   const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  // 2순위: 예정 일정(시작일 빠른 순, 동률 시 이벤트 우선순위)
   const upcoming = schedules
     .filter((schedule) => {
       const range = getScheduleRange(schedule);
@@ -140,6 +144,7 @@ const getRepresentativeSchedule = (schedules: Schedule[]) => {
 };
 
 const getActiveStatuses = (schedules: Schedule[]) => {
+  // 오늘 진행 중인 일정의 이벤트 타입만 뽑아 중복 제거 후 우선순위 정렬
   const inProgress = getTodayInProgressSchedules(schedules);
   const unique = Array.from(
     new Set(inProgress.map((schedule) => toWishlistCardType(schedule.eventType))),
@@ -166,6 +171,7 @@ function CertManage() {
   const favoriteScheduleMapQuery = useQuery({
     queryKey: ["favoriteScheduleMap", currentYear, favorites.map((item) => item.certId)],
     queryFn: async () => {
+      // 자격증별 상세 일정 API를 병렬 호출해 카드 렌더링용 맵 구성
       const entries = await Promise.all(
         favorites.map(async (item) => {
           try {
@@ -185,6 +191,7 @@ function CertManage() {
   const monthlySchedulePoolQuery = useQuery({
     queryKey: ["wishlistSchedulePool", currentYear, currentMonth, nextYear, nextMonth],
     queryFn: async () => {
+      // 월별 API에 걸리는 경계 일정 보완을 위해 이번 달 + 다음 달을 합쳐 사용
       const [currentMonthSchedules, nextMonthSchedules] = await Promise.all([
         getSchedules(currentYear, currentMonth),
         getSchedules(nextYear, nextMonth),
@@ -337,6 +344,7 @@ function CertManage() {
               const byMonthPool = (monthlySchedulePoolQuery.data ?? []).filter(
                 (schedule) => schedule.certId === item.certId,
               );
+              // 서로 다른 소스의 동일 일정을 dedupe 후 대표 일정 계산에 사용
               const scheduleMap = new Map<string, Schedule>();
               [...byCertApi, ...byMonthPool].forEach((schedule) => {
                 scheduleMap.set(`${schedule.scheduleId}-${schedule.eventType}`, schedule);

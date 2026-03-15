@@ -6,6 +6,7 @@ export interface FavoriteItem {
     authority: string;
     startDate: string;
     endDate: string;
+    // 서버 스펙 전환 구간 호환용(이벤트 타입 관련 필드)
     type?: string;
     eventType?: string;
     examType?: string;

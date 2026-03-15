@@ -5,6 +5,7 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   schedules: Schedule[] | null;
+  // 호출하는 쪽에서 모달 제목을 직접 지정할 수 있도록 옵션 추가
   title?: string;
 }
 

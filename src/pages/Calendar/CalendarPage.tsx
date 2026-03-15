@@ -50,6 +50,7 @@ function CalendarPage() {
         queryFn: () => getSchedules(year, month)
     });
 
+    // 입력값 변경과 검색 실행 시점을 분리해 불필요한 즉시 필터링을 줄임
     const handleSearch = useCallback(() => {
         setSearchKeyword(searchInput);
     }, [searchInput]);

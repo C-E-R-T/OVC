@@ -56,6 +56,7 @@ const WISHLIST_CARD_CONFIG: Record<WishlistCardType, WishlistCardConfig> = {
 
 //시간 제거하는 함수 -> 날짜만 표시되도록
 function toDateText(dateString: string) {
+  // UTC 파싱 오차를 피하기 위해 문자열 기준으로 날짜만 잘라 사용
   return dateString.split("T")[0];
 }
 
@@ -143,6 +144,7 @@ const MyWishlistCard = ({
 
       {/* 상단 */}
       <div className="flex items-start mb-6 gap-3 flex-wrap">
+        {/* 진행 중 상태가 여러 개면 배지를 모두 노출, 아니면 대표 타입만 노출 */}
         {(activeStatuses.length > 1 ? activeStatuses : [type]).map((status) => {
           const statusConfig = WISHLIST_CARD_CONFIG[status];
           return (
