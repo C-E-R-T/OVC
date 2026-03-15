@@ -6,6 +6,9 @@ export interface FavoriteItem {
     authority: string;
     startDate: string;
     endDate: string;
+    type?: string;
+    eventType?: string;
+    examType?: string;
 }
 
 export const getFavorites = async (): Promise<FavoriteItem[]> => {
@@ -22,4 +25,3 @@ export const deleteFavorite = async (certId: number) => {
     const res=await apiClient.delete(`/api/users/me/favorites/${certId}`);
     return res.data;
 }
-

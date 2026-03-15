@@ -5,11 +5,12 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   schedules: Schedule[] | null;
+  title?: string;
 }
 
 const formatDate = (value?: string) => value?.slice(2, 10) ?? "-";
 
-function CertScheduleDetailModal({ isOpen, onClose, schedules }: Props) {
+function CertScheduleDetailModal({ isOpen, onClose, schedules, title }: Props) {
   if(!isOpen) return null;
   if (!schedules || schedules.length === 0) return <div>일정이 없습니다.</div>
 
@@ -17,7 +18,7 @@ function CertScheduleDetailModal({ isOpen, onClose, schedules }: Props) {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={`${schedules[0].examName} 일정`}
+      title={title ?? `${schedules[0].certificateName} 일정`}
       panelClassName="max-w-4xl"
     >
       <div className="max-h-[70vh] overflow-y-auto pr-2">

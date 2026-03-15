@@ -250,6 +250,7 @@ function CalendarPage() {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 schedules={certSchedules}
+                title={selectedSchedule ? `${selectedSchedule.certificateName} 일정` : undefined}
             />
 
         </div>

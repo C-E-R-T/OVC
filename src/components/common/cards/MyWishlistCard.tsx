@@ -16,6 +16,7 @@ interface MyWishlistCardProps {
   title: string;
   startDate: string;
   endDate: string;
+  activeStatuses?: WishlistCardType[];
   onClick?: () => void;
   onDelete?: () => void;
 }
@@ -39,14 +40,14 @@ const WISHLIST_CARD_CONFIG: Record<WishlistCardType, WishlistCardConfig> = {
   },
   EXAM: {
     label: "시험일",
-    badgeClassName: "bg-emerald-600 text-white",
+    badgeClassName: "bg-red-500 text-white",
     datePrefix: "시험일",
     buttonText: "수험표 확인",
     icon: CalendarDays,
   },
   RESULT: {
     label: "시험발표일",
-    badgeClassName: "bg-violet-600 text-white",
+    badgeClassName: "bg-green-500 text-white",
     datePrefix: "시험발표일",
     buttonText: "결과 확인",
     icon: CalendarDays,
@@ -54,15 +55,21 @@ const WISHLIST_CARD_CONFIG: Record<WishlistCardType, WishlistCardConfig> = {
 };
 
 //시간 제거하는 함수 -> 날짜만 표시되도록
+function toDateText(dateString: string) {
+  return dateString.split("T")[0];
+}
+
 function toDateOnly(dateString: string) {
-  const date = new Date(dateString);
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const [year, month, day] = toDateText(dateString).split("-").map(Number);
+  return new Date(year, month - 1, day);
 }
 
 //startDate와 endDate가 같으면 일정을 기간이 아닌 하루로 표시
 function formatDateRange(startDate: string, endDate: string) {
-  if (startDate === endDate) return startDate;
-  return `${startDate} - ${endDate}`;
+  const start = toDateText(startDate);
+  const end = toDateText(endDate);
+  if (start === end) return start;
+  return `${start} - ${end}`;
 }
 
 //디데이 표시하는 함수
@@ -94,6 +101,7 @@ const MyWishlistCard = ({
   title,
   startDate,
   endDate,
+  activeStatuses = [],
   onClick,
   onDelete,
 }: MyWishlistCardProps) => {
@@ -134,25 +142,29 @@ const MyWishlistCard = ({
       )}
 
       {/* 상단 */}
-      <div className="flex items-start mb-6 gap-3">
-
-        <span
-          className={`
-          px-4
-          py-2
-          text-sm
-          font-semibold
-          rounded-full
-          ${config.badgeClassName}
-          `}
-        >
-          {config.label}
-        </span>
+      <div className="flex items-start mb-6 gap-3 flex-wrap">
+        {(activeStatuses.length > 1 ? activeStatuses : [type]).map((status) => {
+          const statusConfig = WISHLIST_CARD_CONFIG[status];
+          return (
+            <span
+              key={status}
+              className={`
+              px-4
+              py-2
+              text-sm
+              font-semibold
+              rounded-full
+              ${statusConfig.badgeClassName}
+              `}
+            >
+              {statusConfig.label}
+            </span>
+          );
+        })}
 
         <span className={`text-xl font-extrabold ${dayStatus.className}`}>
           {dayStatus.text}
         </span>
-
       </div>
 
       {/* 제목 */}
