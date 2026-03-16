@@ -88,7 +88,11 @@ const getScheduleRange = (schedule: Schedule) => {
 
 const getTodayInProgressSchedules = (schedules: Schedule[]) => {
   const today = new Date();
-  const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const todayOnly = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate(),
+  );
 
   return schedules.filter((schedule) => {
     const range = getScheduleRange(schedule);
@@ -107,7 +111,8 @@ const getRepresentativeSchedule = (schedules: Schedule[]) => {
     const aRange = getScheduleRange(a);
     const bRange = getScheduleRange(b);
     if (!aRange || !bRange) return 0;
-    const priorityDiff = getEventPriority(b.eventType) - getEventPriority(a.eventType);
+    const priorityDiff =
+      getEventPriority(b.eventType) - getEventPriority(a.eventType);
     if (priorityDiff !== 0) return priorityDiff;
     const aEnd = toDateOnly(aRange.end);
     const bEnd = toDateOnly(bRange.end);
@@ -118,7 +123,11 @@ const getRepresentativeSchedule = (schedules: Schedule[]) => {
   if (inProgress.length > 0) return inProgress[0];
 
   const today = new Date();
-  const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const todayOnly = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate(),
+  );
   // 2순위: 예정 일정(시작일 빠른 순, 동률 시 이벤트 우선순위)
   const upcoming = schedules
     .filter((schedule) => {
@@ -147,9 +156,19 @@ const getActiveStatuses = (schedules: Schedule[]) => {
   // 오늘 진행 중인 일정의 이벤트 타입만 뽑아 중복 제거 후 우선순위 정렬
   const inProgress = getTodayInProgressSchedules(schedules);
   const unique = Array.from(
-    new Set(inProgress.map((schedule) => toWishlistCardType(schedule.eventType))),
+    new Set(
+      inProgress.map((schedule) => toWishlistCardType(schedule.eventType)),
+    ),
   );
   return unique.sort((a, b) => getEventPriority(b) - getEventPriority(a));
+};
+
+const WISHLIST_LINK_BY_TYPE: Record<WishlistCardType, string> = {
+  APPLY:
+    "https://www.q-net.or.kr/man001.do?id=man00103&gSite=Q&gId=&redir=rcv202.do%3Fid%3Drcv20210%26gId%3D%26gSite%3DQ",
+  EXAM: "https://www.q-net.or.kr/man001.do?id=man00103&gSite=Q&gId=&redir=myp002.do%3Fid%3Dmyp00201%26gId%3D%26gSite%3DQ",
+  RESULT:
+    "https://www.q-net.or.kr/man001.do?id=man00103&gSite=Q&gId=&redir=rcv202.do%3Fid%3Drcv20210%26gId%3D%26gSite%3DQ",
 };
 
 function CertManage() {
@@ -163,19 +182,26 @@ function CertManage() {
   const nextMonth = nextMonthDate.getMonth() + 1;
 
   //찜 목록 데이터를 가져옴
-  const {data: favorites = [] } = useQuery({
+  const { data: favorites = [] } = useQuery({
     queryKey: ["favorites"],
-    queryFn: getFavorites
+    queryFn: getFavorites,
   });
 
   const favoriteScheduleMapQuery = useQuery({
-    queryKey: ["favoriteScheduleMap", currentYear, favorites.map((item) => item.certId)],
+    queryKey: [
+      "favoriteScheduleMap",
+      currentYear,
+      favorites.map((item) => item.certId),
+    ],
     queryFn: async () => {
       // 자격증별 상세 일정 API를 병렬 호출해 카드 렌더링용 맵 구성
       const entries = await Promise.all(
         favorites.map(async (item) => {
           try {
-            const schedules = await getSchedulesByCertificate(item.certId, currentYear);
+            const schedules = await getSchedulesByCertificate(
+              item.certId,
+              currentYear,
+            );
             return [item.certId, schedules] as const;
           } catch {
             return [item.certId, []] as const;
@@ -189,7 +215,13 @@ function CertManage() {
   });
 
   const monthlySchedulePoolQuery = useQuery({
-    queryKey: ["wishlistSchedulePool", currentYear, currentMonth, nextYear, nextMonth],
+    queryKey: [
+      "wishlistSchedulePool",
+      currentYear,
+      currentMonth,
+      nextYear,
+      nextMonth,
+    ],
     queryFn: async () => {
       // 월별 API에 걸리는 경계 일정 보완을 위해 이번 달 + 다음 달을 합쳐 사용
       const [currentMonthSchedules, nextMonthSchedules] = await Promise.all([
@@ -271,12 +303,12 @@ function CertManage() {
   };
 
   const deleteFavoriteMutation = useMutation({
-  mutationFn: (certId: number) => deleteFavorite(certId),
+    mutationFn: (certId: number) => deleteFavorite(certId),
 
-  onSuccess: async () => {
-    await queryClient.invalidateQueries({ queryKey: ["favorites"] });
-  }
-});
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["favorites"] });
+    },
+  });
 
   return (
     <div className="p-10">
@@ -310,9 +342,13 @@ function CertManage() {
           </div>
 
           {isLoading ? (
-            <p className="text-sm text-gray-500">자격증 목록을 불러오는 중입니다...</p>
+            <p className="text-sm text-gray-500">
+              자격증 목록을 불러오는 중입니다...
+            </p>
           ) : isError ? (
-            <p className="text-sm text-red-500">자격증 목록 조회에 실패했습니다.</p>
+            <p className="text-sm text-red-500">
+              자격증 목록 조회에 실패했습니다.
+            </p>
           ) : (
             <div className="space-y-4">
               {certList.map((cert, index) => (
@@ -340,24 +376,33 @@ function CertManage() {
           <div className="flex justify-center"></div>
           <div className="grid grid-cols-2 gap-6 mx-auto max-w-[1000px]">
             {favorites.map((item) => {
-              const byCertApi = favoriteScheduleMapQuery.data?.[item.certId] ?? [];
+              const byCertApi =
+                favoriteScheduleMapQuery.data?.[item.certId] ?? [];
               const byMonthPool = (monthlySchedulePoolQuery.data ?? []).filter(
                 (schedule) => schedule.certId === item.certId,
               );
               // 서로 다른 소스의 동일 일정을 dedupe 후 대표 일정 계산에 사용
               const scheduleMap = new Map<string, Schedule>();
               [...byCertApi, ...byMonthPool].forEach((schedule) => {
-                scheduleMap.set(`${schedule.scheduleId}-${schedule.eventType}`, schedule);
+                scheduleMap.set(
+                  `${schedule.scheduleId}-${schedule.eventType}`,
+                  schedule,
+                );
               });
               const schedules = Array.from(scheduleMap.values());
 
               const representative = getRepresentativeSchedule(schedules);
-              const representativeRange = representative ? getScheduleRange(representative) : null;
+              const representativeRange = representative
+                ? getScheduleRange(representative)
+                : null;
               const activeStatuses = getActiveStatuses(schedules);
 
               const type = representative
                 ? toWishlistCardType(representative.eventType)
-                : toWishlistCardType(item.type ?? item.eventType ?? item.examType);
+                : toWishlistCardType(
+                    item.type ?? item.eventType ?? item.examType,
+                  );
+              const externalLink = WISHLIST_LINK_BY_TYPE[type];
 
               return (
                 <MyWishlistCard
@@ -367,6 +412,9 @@ function CertManage() {
                   startDate={representativeRange?.start ?? item.startDate}
                   endDate={representativeRange?.end ?? item.endDate}
                   activeStatuses={activeStatuses}
+                  onClick={() =>
+                    window.open(externalLink, "_blank", "noopener,noreferrer")
+                  }
                   onDelete={() => deleteFavoriteMutation.mutate(item.certId)}
                 />
               );
