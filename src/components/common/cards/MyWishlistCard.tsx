@@ -15,6 +15,7 @@ interface MyWishlistCardProps {
   title: string;
   startDate: string;
   endDate: string;
+  activeStatuses?: WishlistCardType[];
   onClick?: () => void;
   onDelete?: () => void;
 }
@@ -53,15 +54,21 @@ const WISHLIST_CARD_CONFIG: Record<WishlistCardType, WishlistCardConfig> = {
 };
 
 // 시간 제거하는 함수 -> 날짜만 표시되도록
+function toDateText(dateString: string) {
+  return dateString.split("T")[0];
+}
+
 function toDateOnly(dateString: string) {
-  const date = new Date(dateString);
+  const date = new Date(toDateText(dateString));
   return new Date(date.getFullYear(), date.getMonth(), date.getDate());
 }
 
 // startDate와 endDate가 같으면 일정을 기간이 아닌 하루로 표시
 function formatDateRange(startDate: string, endDate: string) {
-  if (startDate === endDate) return startDate;
-  return `${startDate} - ${endDate}`;
+  const start = toDateText(startDate);
+  const end = toDateText(endDate);
+  if (start === end) return start;
+  return `${start} - ${end}`;
 }
 
 // 디데이 표시하는 함수
@@ -97,6 +104,7 @@ const MyWishlistCard = ({
   title,
   startDate,
   endDate,
+  activeStatuses = [],
   onClick,
   onDelete,
 }: MyWishlistCardProps) => {
@@ -146,19 +154,25 @@ const MyWishlistCard = ({
         </button>
       )}
 
-      <div className="mb-6 flex items-start gap-3">
-        <span
-          className={`
-            rounded-full
-            px-4
-            py-2
-            text-sm
-            font-semibold
-            ${config.badgeClassName}
-          `}
-        >
-          {config.label}
-        </span>
+      <div className="mb-6 flex items-start gap-3 flex-wrap">
+        {(activeStatuses.length > 1 ? activeStatuses : [type]).map((status) => {
+          const statusConfig = WISHLIST_CARD_CONFIG[status];
+          return (
+            <span
+              key={status}
+              className={`
+                rounded-full
+                px-4
+                py-2
+                text-sm
+                font-semibold
+                ${statusConfig.badgeClassName}
+              `}
+            >
+              {statusConfig.label}
+            </span>
+          );
+        })}
 
         <span className={`text-xl font-extrabold ${dayStatus.className}`}>
           {dayStatus.text}

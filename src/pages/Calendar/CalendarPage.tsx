@@ -12,6 +12,22 @@ import { useQuery } from "@tanstack/react-query";
 import CertScheduleDetailModal from "../../components/common/modal/CertScheduleDetailModal";
 import { Search } from "lucide-react";
 
+type DetailTab =
+    | "EXAM_TREND"
+    | "ACQ_METHOD"
+    | "EXAM_SUBJECT"
+    | "PASS_CRITERIA"
+    | "RELATED_DEPARTMENT";
+
+// 상세 정보 탭 버튼 정의(라벨/키를 한 곳에서 관리)
+const DETAIL_TAB_OPTIONS: Array<{ key: DetailTab; label: string }> = [
+    { key: "EXAM_TREND", label: "출제 경향" },
+    { key: "ACQ_METHOD", label: "취득 방법" },
+    { key: "EXAM_SUBJECT", label: "시험 과목" },
+    { key: "PASS_CRITERIA", label: "합격 기준" },
+    { key: "RELATED_DEPARTMENT", label: "관련 학과" },
+];
+
 function CalendarPage() {
     const today = new Date();
 
@@ -22,24 +38,31 @@ function CalendarPage() {
     const [selectedEvent, setSelectedEvent] = useState<EventApi | null>(null);
     const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(null);
     const [certificate, setCertificate] = useState<Certificate | null>(null);
+    // 현재 활성화된 상세 정보 탭
+    const [selectedDetailTab, setSelectedDetailTab] = useState<DetailTab>("EXAM_TREND");
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [certSchedules, setCertSchedules] = useState<Schedule[]>([]);
 
     const [searchInput, setSearchInput] = useState("");
+    const [searchKeyword, setSearchKeyword] = useState("");
 
     const { data: schedules = [], isLoading, error } = useQuery({
         queryKey: ["schedules", year, month],
         queryFn: () => getSchedules(year, month),
     });
 
+    const handleSearch = useCallback(() => {
+        setSearchKeyword(searchInput);
+    }, [searchInput]);
+
     const filteredSchedules = useMemo(() => {
-        if (!searchInput.trim()) return schedules;
+        if (!searchKeyword.trim()) return schedules;
 
         return schedules.filter((schedule) =>
-            schedule.certificateName.toLowerCase().includes(searchInput.toLowerCase())
+            schedule.certificateName.toLowerCase().includes(searchKeyword.toLowerCase())
         );
-    }, [schedules, searchInput]);
+    }, [schedules, searchKeyword]);
 
     const events = useMemo(() => {
         return mapSchedulesToEvents(filteredSchedules);
@@ -54,6 +77,7 @@ function CalendarPage() {
             setCertificate(certData);
             setSelectedSchedule(props);
             setSelectedEvent(info.event);
+            setSelectedDetailTab("EXAM_TREND");
         } catch (error) {
             console.error("자격증 정보 불러오기 실패", error);
         }
@@ -81,6 +105,23 @@ function CalendarPage() {
             throw error;
         }
     };
+
+    const detailButtonClass = (tab: DetailTab) =>
+        selectedDetailTab === tab
+            ? "rounded-full bg-black px-4 py-2.5 text-sm font-medium text-white transition"
+            : "rounded-full border border-black px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-white";
+
+    // 탭 키와 API 필드를 매핑해 조건문 분기를 단순화
+    const detailTextByTab: Record<DetailTab, string | null | undefined> = {
+        EXAM_TREND: certificate?.examTrend,
+        ACQ_METHOD: certificate?.acqMethod,
+        EXAM_SUBJECT: certificate?.examSubject,
+        PASS_CRITERIA: certificate?.passCriteria,
+        RELATED_DEPARTMENT: certificate?.relatedDepartment,
+    };
+
+    // 선택된 탭의 상세 텍스트를 가져오고 값이 없으면 안내 문구를 표시
+    const detailText = detailTextByTab[selectedDetailTab] ?? "등록된 상세 정보가 없습니다.";
 
     if (isLoading) {
         return (
@@ -146,14 +187,21 @@ function CalendarPage() {
                             </div>
 
                             <div className="flex w-full max-w-[360px] items-center gap-3 rounded-2xl border border-white/70 bg-white/70 px-4 py-3 shadow-[0_8px_30px_rgba(15,23,42,0.04)] backdrop-blur-xl">
-                                <Search size={18} className="text-gray-400" />
                                 <input
                                     className="w-full bg-transparent text-gray-800 outline-none placeholder:text-gray-400"
                                     type="text"
                                     placeholder="일정 검색..."
                                     value={searchInput}
                                     onChange={(e) => setSearchInput(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                            handleSearch();
+                                        }
+                                    }}
                                 />
+                                <button type="button" onClick={handleSearch} aria-label="검색">
+                                    <Search size={18} className="text-gray-400" />
+                                </button>
                             </div>
                         </div>
 
@@ -281,17 +329,22 @@ function CalendarPage() {
                                             <h3 className="text-lg font-semibold text-gray-900">상세 정보</h3>
 
                                             <div className="mt-4 flex flex-wrap gap-3">
-                                                <button className="rounded-full border border-black px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-white">
-                                                    유의 사항
-                                                </button>
+                                                {DETAIL_TAB_OPTIONS.map((tab) => (
+                                                    <button
+                                                        key={tab.key}
+                                                        type="button"
+                                                        onClick={() => setSelectedDetailTab(tab.key)}
+                                                        className={detailButtonClass(tab.key)}
+                                                    >
+                                                        {tab.label}
+                                                    </button>
+                                                ))}
+                                            </div>
 
-                                                 <button className="rounded-full border border-black px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-white">
-                                                    출제 경향
-                                                </button>
-
-                                                 <button className="rounded-full border border-black px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-white">
-                                                    취득 방법
-                                                </button>
+                                            <div className="mt-4 rounded-2xl border border-gray-200 bg-white/70 p-4">
+                                                <p className="text-sm leading-6 text-gray-700 whitespace-pre-line">
+                                                    {detailText.trim()}
+                                                </p>
                                             </div>
                                         </div>
                                     )}
@@ -305,6 +358,8 @@ function CalendarPage() {
                     isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(false)}
                     schedules={certSchedules}
+                    // 선택한 카드의 자격증명을 모달 제목으로 고정해 회차명이 섞이지 않게 한다.
+                    title={selectedSchedule ? `${selectedSchedule.certificateName} 일정` : undefined}
                 />
             </div>
         </div>

@@ -75,7 +75,7 @@ function SearchGridCard({
             }}
             className="h-[50px] w-[160px] rounded-full bg-gray-900 text-sm font-semibold text-white transition hover:bg-primaryDark"
           >
-            일정 보기
+            상세 보기
           </button>
         </div>
       </div>

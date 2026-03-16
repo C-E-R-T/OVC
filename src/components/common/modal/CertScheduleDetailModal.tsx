@@ -5,11 +5,13 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   schedules: Schedule[] | null;
+  // 호출부에서 제목을 주입할 수 있도록 옵션으로 열어둔다.
+  title?: string;
 }
 
 const formatDate = (value?: string) => value?.slice(2, 10) ?? "-";
 
-function CertScheduleDetailModal({ isOpen, onClose, schedules }: Props) {
+function CertScheduleDetailModal({ isOpen, onClose, schedules, title }: Props) {
   if(!isOpen) return null;
   if (!schedules || schedules.length === 0) return <div>일정이 없습니다.</div>
 
@@ -17,7 +19,8 @@ function CertScheduleDetailModal({ isOpen, onClose, schedules }: Props) {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={`${schedules[0].examName} 일정`}
+      // title prop이 있으면 우선 사용하고, 없으면 기존 일정 데이터의 이름으로 대체한다.
+      title={title ?? `${schedules[0].examName} 일정`}
       panelClassName="max-w-4xl"
     >
       <div className="max-h-[70vh] overflow-y-auto pr-2">
