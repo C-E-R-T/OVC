@@ -136,7 +136,7 @@ function CalendarPage() {
     if (error) {
         return (
             <div className="min-h-screen bg-[#f1f2ed] px-6 pb-12 pt-30">
-                <div className="mx-auto max-w-[1440px] rounded-[32px] border border-white/70 bg-white/45 p-10 text-center text-red-500 shadow-[0_10px_40px_rgba(15,23,42,0.05)] backdrop-blur-xl">
+                <div className="mx-auto max-w-[1440px] mt-6 rounded-[32px] border border-white/70 bg-white/45 p-10 text-center text-red-500 shadow-[0_10px_40px_rgba(15,23,42,0.05)] backdrop-blur-xl">
                     일정 데이터를 불러오는데 실패했습니다.
                 </div>
             </div>
@@ -231,7 +231,7 @@ function CalendarPage() {
 
                     {/* 우측 상세 패널 */}
                     {selectedEvent && selectedSchedule && (
-                        <aside className="sticky top-60 h-fit min-h-[710px] rounded-[32px] border border-white/70 bg-white/45 p-6 shadow-[0_10px_40px_rgba(15,23,42,0.05)] backdrop-blur-xl">
+                        <aside className="sticky top-30 h-fit min-h-[710px] rounded-[32px] border border-white/70 bg-white/45 p-6 shadow-[0_10px_40px_rgba(15,23,42,0.05)] backdrop-blur-xl">
                             {!selectedEvent || !selectedSchedule ? (
                                 <div className="flex min-h-[520px] flex-col justify-between">
                                     <div>
@@ -269,7 +269,7 @@ function CalendarPage() {
                                     </button>
 
                                     {/* 상단 제목 */}
-                                    <div className="border-b border-gray-200/70 pb-6 pr-12">
+                                    <div className="border-b border-gray-200/70 pb-3 pr-12">
                                         <p className="inline-flex items-center rounded-full border border-primary/10 bg-primarySoft/70 px-3 py-1 text-xs font-semibold text-gray shadow-sm">
                                             {selectedSchedule.eventType}
                                         </p>
