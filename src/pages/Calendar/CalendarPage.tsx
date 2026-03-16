@@ -12,6 +12,21 @@ import { useQuery } from "@tanstack/react-query";
 import CertScheduleDetailModal from "../../components/common/modal/CertScheduleDetailModal";
 import { Search } from "lucide-react";
 
+type DetailTab =
+    | "EXAM_TREND"
+    | "ACQ_METHOD"
+    | "EXAM_SUBJECT"
+    | "PASS_CRITERIA"
+    | "RELATED_DEPARTMENT";
+
+const DETAIL_TAB_OPTIONS: Array<{ key: DetailTab; label: string }> = [
+    { key: "EXAM_TREND", label: "출제 경향" },
+    { key: "ACQ_METHOD", label: "취득 방법" },
+    { key: "EXAM_SUBJECT", label: "시험 과목" },
+    { key: "PASS_CRITERIA", label: "합격 기준" },
+    { key: "RELATED_DEPARTMENT", label: "관련 학과" },
+];
+
 function CalendarPage() {
     const today = new Date();
 
@@ -24,22 +39,36 @@ function CalendarPage() {
     const [certificate, setCertificate] = useState<Certificate | null>(null);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedDetailTab, setSelectedDetailTab] = useState<DetailTab>("EXAM_TREND");
+
+    //일정 상세조회 버튼 클릭 시 모달 전체 일정 조회를 위한 state
     const [certSchedules, setCertSchedules] = useState<Schedule[]>([]);
 
     const [searchInput, setSearchInput] = useState("");
+    //실제 검색에 반영되는 값(엔터/검색 버튼 시점)
+    const [searchKeyword, setSearchKeyword] = useState("");
 
     const { data: schedules = [], isLoading, error } = useQuery({
         queryKey: ["schedules", year, month],
         queryFn: () => getSchedules(year, month),
     });
 
+    // 입력값 변경과 검색 실행 시점을 분리해 불필요한 즉시 필터링을 줄임
+    const handleSearch = useCallback(() => {
+        setSearchKeyword(searchInput);
+    }, [searchInput]);
+
+    //schedules 또는 searchKeyword가 바뀌면 필터 재계산
     const filteredSchedules = useMemo(() => {
-        if (!searchInput.trim()) return schedules;
+        if (!searchKeyword.trim()) return schedules;
 
         return schedules.filter((schedule) =>
-            schedule.certificateName.toLowerCase().includes(searchInput.toLowerCase())
+            //자격증 이름에 검색어가 포함되어 있으면 일정을 유지함 
+            schedule.certificateName
+                .toLowerCase()
+                .includes(searchKeyword.toLowerCase())
         );
-    }, [schedules, searchInput]);
+    }, [schedules, searchKeyword])
 
     const events = useMemo(() => {
         return mapSchedulesToEvents(filteredSchedules);
@@ -54,6 +83,8 @@ function CalendarPage() {
             setCertificate(certData);
             setSelectedSchedule(props);
             setSelectedEvent(info.event);
+            setSelectedDetailTab("EXAM_TREND");
+
         } catch (error) {
             console.error("자격증 정보 불러오기 실패", error);
         }
@@ -87,6 +118,48 @@ function CalendarPage() {
             <div className="min-h-screen bg-[#f1f2ed] px-6 pb-12 pt-30">
                 <div className="mx-auto max-w-[1440px] rounded-[32px] border border-white/70 bg-white/45 p-10 text-center text-gray-500 shadow-[0_10px_40px_rgba(15,23,42,0.05)] backdrop-blur-xl">
                     일정을 불러오는 중...
+    const detailButtonClass = (tab: DetailTab) =>
+        selectedDetailTab === tab
+            ? "px-4 py-2.5 text-sm rounded-full bg-[#1A0089] text-white font-medium hover:bg-[#14006d] transition"
+            : "px-4 py-2.5 text-sm rounded-full bg-[#FFF3D6] border border-[#E7DAB7] text-[#6B5520] font-medium hover:bg-[#F7E8C2] transition";
+
+    const detailTextByTab: Record<DetailTab, string | null | undefined> = {
+        EXAM_TREND: certificate?.examTrend,
+        ACQ_METHOD: certificate?.acqMethod,
+        EXAM_SUBJECT: certificate?.examSubject,
+        PASS_CRITERIA: certificate?.passCriteria,
+        RELATED_DEPARTMENT: certificate?.relatedDepartment,
+    };
+    const detailText = detailTextByTab[selectedDetailTab] ?? "등록된 상세 정보가 없습니다.";
+
+    return (
+        <div className="flex">
+            {/* 캘린더 */}
+            <div className="flex-1 p-[40px] flex flex-col gap-4">
+
+                {/* 검색창 */}
+                <div className="flex justify-end">
+                    <div className="flex w-[300px] border border-gray-300 rounded-lg px-3 py-2 items-center gap-2">
+                        <input
+                            className="flex-1 outline-none"
+                            type="text"
+                            placeholder="일정 검색..."
+                            value={searchInput}
+                            onChange={(e) => setSearchInput(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                    handleSearch();
+                                }
+                            }}
+                        />
+                        <button
+                            type="button"
+                            onClick={handleSearch}
+                            aria-label="검색"
+                        >
+                            <Search size={18} />
+                        </button>
+                    </div>
                 </div>
             </div>
         );
@@ -178,6 +251,31 @@ function CalendarPage() {
                                     right: "today",
                                 }}
                             />
+                    {/* 상세 정보 */}
+                    {certificate && (
+                        <div className="pt-6">
+                            <h2 className="text-lg font-semibold text-[#1A0089]">
+                                상세 정보
+                            </h2>
+
+                            <div className="mt-4 flex flex-wrap gap-3">
+                                {DETAIL_TAB_OPTIONS.map((tab) => (
+                                    <button
+                                        key={tab.key}
+                                        type="button"
+                                        onClick={() => setSelectedDetailTab(tab.key)}
+                                        className={detailButtonClass(tab.key)}
+                                    >
+                                        {tab.label}
+                                    </button>
+                                ))}
+                            </div>
+
+                            <div className="mt-4 rounded-2xl border border-[#E7DAB7] bg-white p-4">
+                                <p className="text-sm leading-6 text-[#334155] whitespace-pre-line">
+                                    {detailText.trim()}
+                                </p>
+                            </div>
                         </div>
                     </section>
 
@@ -300,6 +398,14 @@ function CalendarPage() {
                         </aside>
                     )}
                 </div>
+            )}
+
+            <CertScheduleDetailModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                schedules={certSchedules}
+                title={selectedSchedule ? `${selectedSchedule.certificateName} 일정` : undefined}
+            />
 
                 <CertScheduleDetailModal
                     isOpen={isModalOpen}

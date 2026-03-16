@@ -5,11 +5,13 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   schedules: Schedule[] | null;
+  // 호출하는 쪽에서 모달 제목을 직접 지정할 수 있도록 옵션 추가
+  title?: string;
 }
 
 const formatDate = (value?: string) => value?.slice(2, 10) ?? "-";
 
-function CertScheduleDetailModal({ isOpen, onClose, schedules }: Props) {
+function CertScheduleDetailModal({ isOpen, onClose, schedules, title }: Props) {
   if(!isOpen) return null;
   if (!schedules || schedules.length === 0) return <div>일정이 없습니다.</div>
 
@@ -17,12 +19,12 @@ function CertScheduleDetailModal({ isOpen, onClose, schedules }: Props) {
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={`${schedules[0].examName} 일정`}
-      panelClassName="max-w-4xl"
+      title={title ?? `${schedules[0].certificateName} 일정`}
+      panelClassName="!w-fit !max-w-none"
     >
-      <div className="max-h-[70vh] overflow-y-auto pr-2">
-        <div className="mt-4">
-          <table className="w-full border-collapse text-left text-xs">
+      <div className="max-h-[70vh] overflow-y-auto overflow-x-hidden pr-2">
+        <div className="mt-4 w-fit">
+          <table className="w-auto border-collapse text-left text-xs">
             <thead>
               <tr className="bg-gray-100">
                 <th className="border border-gray-300 px-3 py-2 font-semibold whitespace-nowrap">시험 종류</th>

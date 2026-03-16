@@ -58,6 +58,7 @@ function CertSearch() {
     setIsModalOpen(true);
   };
 
+  //input에 입력했던것으로 검색에 적용할 겁니다.
   const handleSearch = () => {
     setKeyword(searchInput);
     setCategoryIds(selectedCategories);
@@ -104,6 +105,62 @@ function CertSearch() {
                 커리어를 한 단계 높여줄 최적의 자격증을 리스트에서 확인해보세요.
               </p>
             </div>
+    <div className="flex">
+      {/* 좌측 - 사이드바 영역 */}
+      <div className="w-[420px] shrink-0 min-h-screen bg-[#FFF9EC] border-r border-[#ECE7D8] p-8 animate-slideIn">
+        <div className="pb-6 border-b border-[#ECE7D8]">
+          <h3 className="font-semibold text-[22px] text-[#1A0089]">카테고리</h3>
+          <p className="mt-2 text-sm text-[#6B7280]">
+            원하는 분야를 선택해서 자격증을 찾아보세요.
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-2 pt-6">
+          {isCategoryLoading && (
+            <p className="text-sm text-gray-500">카테고리 불러오는 중...</p>
+          )}
+
+          {isCategoryError && (
+            <p className="text-sm text-red-500">
+              카테고리를 불러오지 못했습니다.
+            </p>
+          )}
+
+          {!isCategoryLoading &&
+            !isCategoryError &&
+            categories.map((category) => {
+              const isSelected = selectedCategories.includes(category.id);
+
+              return (
+                <label
+                  key={category.id}
+                  className={`flex items-center gap-4 cursor-pointer px-3 py-5 rounded-xl transition ${
+                    isSelected
+                      ? "bg-[#FFF3D6] border border-[#E7DAB7]"
+                      : "hover:bg-[#FFF3D6]/60"
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={isSelected}
+                    onChange={() => handleCategoryChange(category.id)}
+                    className="w-5 h-5 accent-[#1A0089]"
+                  />
+
+                  <span
+                    className={`text-base ${
+                      isSelected
+                        ? "text-[#1A0089] font-semibold"
+                        : "text-gray-700"
+                    }`}
+                  >
+                    {category.name}
+                  </span>
+                </label>
+              );
+            })}
+        </div>
+      </div>
 
             <div className="inline-flex h-fit gap-2 rounded-full border border-white/70 bg-white/70 p-1.5 shadow-[0_8px_24px_rgba(15,23,42,0.05)] backdrop-blur-xl">
               <button
@@ -142,6 +199,20 @@ function CertSearch() {
             <button
               onClick={handleSearch}
               className="flex h-11 w-11 items-center justify-center rounded-full bg-gray-900 text-white transition hover:scale-105 hover:bg-primaryDark"
+          <div className="flex h-fit p-2 bg-gray-100 rounded-lg gap-2">
+            <button
+              onClick={() => setViewType("grid")}
+              className={`px-4 py-2 rounded-lg transition font-medium ${
+                viewType === "grid" ? "bg-white shadow-sm" : "hover:bg-gray-200"
+              }`}
+            >
+              그리드
+            </button>
+            <button
+              onClick={() => setViewType("list")}
+              className={`px-4 py-2 rounded-lg transition font-medium ${
+                viewType === "list" ? "bg-white shadow-sm" : "hover:bg-gray-200"
+              }`}
             >
               <Search size={18} />
             </button>

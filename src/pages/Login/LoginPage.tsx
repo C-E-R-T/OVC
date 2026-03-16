@@ -2,7 +2,7 @@ function LoginPage() {
 
     const handleNaverLogin = () => {
         try {
-            window.location.href = `${import.meta.env.VITE_API_BASE_URL}/oauth2/authorization/naver`
+            window.location.href = `${import.meta.env.VITE_API_BASE_URL}oauth2/authorization/naver`
         } catch (error) {
             console.log("로그인 오류 발생", error);
             alert("로그인 실패!");
