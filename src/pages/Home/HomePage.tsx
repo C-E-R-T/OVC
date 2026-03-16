@@ -6,7 +6,7 @@ import SectionSearch from "../../sections/SectionSearch"
 
 function HomePage() {
   return (
-    <main className="bg-white">
+    <main>
 
       <SectionHero />
       <SectionCalendar />

@@ -84,7 +84,7 @@ function CalendarPage() {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-gradient-to-b from-[#fcfcfb] via-[#f8f8f6] to-[#f2f5f1] px-6 pb-12 pt-16">
+            <div className="min-h-screen bg-[#f1f2ed] px-6 pb-12 pt-30">
                 <div className="mx-auto max-w-[1440px] rounded-[32px] border border-white/70 bg-white/45 p-10 text-center text-gray-500 shadow-[0_10px_40px_rgba(15,23,42,0.05)] backdrop-blur-xl">
                     일정을 불러오는 중...
                 </div>
@@ -94,7 +94,7 @@ function CalendarPage() {
 
     if (error) {
         return (
-            <div className="min-h-screen bg-gradient-to-b from-[#fcfcfb] via-[#f8f8f6] to-[#f2f5f1] px-6 pb-12 pt-16">
+            <div className="min-h-screen bg-[#f1f2ed] px-6 pb-12 pt-30">
                 <div className="mx-auto max-w-[1440px] rounded-[32px] border border-white/70 bg-white/45 p-10 text-center text-red-500 shadow-[0_10px_40px_rgba(15,23,42,0.05)] backdrop-blur-xl">
                     일정 데이터를 불러오는데 실패했습니다.
                 </div>
@@ -103,10 +103,10 @@ function CalendarPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-[#fcfcfb] via-[#f8f8f6] to-[#f2f5f1] px-6 pb-12 pt-16">
+       <div className="px-6 pb-12 pt-30">
             <div className="mx-auto w-full max-w-[1440px]">
                 {/* 상단 소개 영역 */}
-                <section className="mb-4 rounded-[32px] border border-white/70 bg-white/45 p-8 shadow-[0_10px_40px_rgba(15,23,42,0.05)] backdrop-blur-xl">
+                <section className="mb-4 p-8">
                     <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
                         <div>
                             <p className="mb-3 text-sm font-semibold tracking-[0.18em] text-black">
@@ -133,7 +133,7 @@ function CalendarPage() {
                         : "grid-cols-1"
                     }`}>
                     {/* 캘린더 영역 */}
-                    <section className="rounded-[32px] border border-white/70 bg-white/40 p-6 shadow-[0_10px_40px_rgba(15,23,42,0.05)] backdrop-blur-xl">
+                    <section className="rounded-[32px] border border-white/70 bg-white/40 px-8 py-6 shadow-[0_10px_40px_rgba(15,23,42,0.05)] backdrop-blur-xl">
                         {/* 상단 필터 */}
                         <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                             <div>

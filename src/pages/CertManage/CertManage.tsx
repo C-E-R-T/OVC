@@ -119,11 +119,11 @@ function CertManage() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#fcfcfb] via-[#f8f8f6] to-[#f2f5f1] px-6 pb-12 pt-16">
+    <div className="min-h-screen px-6 pb-12 pt-30">
       <div className="mx-auto w-full max-w-[1440px]">
         {/* 상단 헤더 영역 */}
-        <section className="mb-6 rounded-[32px] border border-white/70 bg-white/45 p-8 shadow-[0_10px_40px_rgba(15,23,42,0.05)] backdrop-blur-xl">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+        <section className="mb-6 p-8 h-full">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <p className="mb-3 text-sm font-semibold tracking-[0.18em] text-gray">
                 MY CERTIFICATIONS
@@ -139,7 +139,7 @@ function CertManage() {
 
             <button
               type="button"
-              className="inline-flex h-fit items-center justify-center rounded-full bg-gray-900 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-primaryDark"
+              className="inline-flex h-fit items-center justify-center rounded-full bg-gray-900 px-8 py-5 text-sm font-semibold text-white shadow-sm transition hover:bg-primaryDark"
               onClick={() => setIsModalOpen(true)}
             >
               내 자격증 등록
@@ -147,33 +147,10 @@ function CertManage() {
           </div>
         </section>
 
-        {/* 통계 요약 */}
-        <section className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
-          <div className="flex rounded-[28px] h-[100px] justify-between border border-white/70 bg-white/55 p-6 shadow-[0_8px_30px_rgba(15,23,42,0.04)] backdrop-blur-xl">
-            <div>
-              <p className="text-lg font-bold text-gray-500 mr-4">취득한 자격증</p>
-              <p className="text-sm text-gray-500">등록된 자격증 수</p>
-            </div>
-            <p className="text-3xl font-bold tracking-tight text-gray-900 pt-1 pr-3">
-              {certList.length}
-            </p>
-          </div>
-
-          <div className="flex rounded-[28px] h-[100px] justify-between border border-white/70 bg-white/55 p-6 shadow-[0_8px_30px_rgba(15,23,42,0.04)] backdrop-blur-xl">
-            <div>
-              <p className="text-lg font-bold text-gray-500 mr-4">취득한 자격증</p>
-              <p className="text-sm text-gray-500">등록된 자격증 수</p>
-            </div>
-            <p className="text-3xl font-bold tracking-tight text-gray-900 pt-1 pr-3">
-              {favorites.length}
-            </p>
-          </div>
-        </section>
-
         {/* 본문 2단 */}
-        <section className="grid grid-cols-1 gap-8 xl:grid-cols-[1.05fr_1.15fr]">
+        <section className="grid grid-cols-1 gap-8 xl:grid-cols-[1fr_1fr]">
           {/* 취득한 자격증 */}
-          <div className="h-full rounded-[32px] border border-white/70 bg-white/40 p-6 shadow-[0_10px_40px_rgba(15,23,42,0.05)] backdrop-blur-xl">
+          <div className="h-full rounded-[32px] border border-white/70 bg-white/40 p-8 shadow-[0_10px_40px_rgba(15,23,42,0.05)] backdrop-blur-xl">
             <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <p className="mb-2 text-sm font-semibold tracking-[0.14em] text-gray">
@@ -231,7 +208,7 @@ function CertManage() {
           </div>
 
           {/* 찜 목록 */}
-          <div className="rounded-[32px] border border-white/70 bg-white/40 p-6 shadow-[0_10px_40px_rgba(15,23,42,0.05)] backdrop-blur-xl">
+          <div className="rounded-[32px] border border-white/70 bg-white/40 p-8 shadow-[0_10px_40px_rgba(15,23,42,0.05)] backdrop-blur-xl">
             <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <p className="mb-2 text-sm font-semibold tracking-[0.14em] text-gray">

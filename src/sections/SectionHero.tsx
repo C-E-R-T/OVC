@@ -2,9 +2,12 @@ import { motion } from "framer-motion"
 
 function SectionHero() {
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-b from-white via-primarySoft/40 to-primarySoft mt-[-30px]">
+    <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-b from-white via-primarySoft/40 to-primarySoft">
 
-      <div className="relative max-w-[1400px] mx-auto px-10 lg:px-20 w-full">
+      {/* 상단 흰색 오버레이 */}
+     <div className="absolute top-0 left-0 z-0 h-[40px] w-full bg-white" />
+
+      <div className="relative z-10 max-w-[1400px] mx-auto px-10 lg:px-20 w-full">
         <motion.p
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}

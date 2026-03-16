@@ -88,10 +88,10 @@ function CertSearch() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#fcfcfb] via-[#f8f8f6] to-[#f2f5f1] px-6 pb-12 pt-16">
+    <div className="min-h-screen px-6 pb-12 pt-30">
       <div className="mx-auto w-full max-w-[1440px]">
         {/* 상단 영역 */}
-        <section className="mb-4 rounded-[32px] border border-white/70 bg-white/45 p-8 shadow-[0_10px_40px_rgba(15,23,42,0.05)] backdrop-blur-xl">
+        <section className="mb-4 p-8">
           <div className="mb-8 flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
             <div>
               <p className="mb-3 text-sm font-semibold tracking-[0.18em] text-black">
@@ -202,7 +202,7 @@ function CertSearch() {
         </section>
 
         {/* 카드 영역 */}
-        <section className="rounded-[32px] p-8 shadow-[0_10px_40px_rgba(15,23,42,0.04)] backdrop-blur-xl">
+        <section className="rounded-[32px] backdrop-blur-xl">
           {isSearchLoading && (
             <div className="py-16 text-center text-gray-500">불러오는 중...</div>
           )}

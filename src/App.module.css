@@ -1,21 +1,15 @@
-/* * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-} */
-
 .container {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f1f2ed;
 }
 
 .main {
-    flex: 1;
-    padding-top: 80px;
+  min-height: 100vh;
 }
 
 .footer {
-    bottom: 0;
-    width: 100%;
+  bottom: 0;
+  width: 100%;
 }
