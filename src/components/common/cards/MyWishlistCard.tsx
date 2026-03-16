@@ -25,6 +25,7 @@ interface WishlistCardConfig {
   badgeClassName: string;
   datePrefix: string;
   buttonText?: string;
+  actionUrl?: string;
   icon: LucideIcon;
 }
 
@@ -35,6 +36,8 @@ const WISHLIST_CARD_CONFIG: Record<WishlistCardType, WishlistCardConfig> = {
     badgeClassName: "bg-primarySoft text-gray border border-primary/10",
     datePrefix: "시험신청일",
     buttonText: "시험 신청하러가기",
+    actionUrl:
+      "https://www.q-net.or.kr/man001.do?id=man00103&gSite=Q&gId=&redir=rcv202.do%3Fid%3Drcv20210%26gId%3D%26gSite%3DQ",
     icon: CalendarDays,
   },
   EXAM: {
@@ -42,6 +45,8 @@ const WISHLIST_CARD_CONFIG: Record<WishlistCardType, WishlistCardConfig> = {
     badgeClassName: "bg-primarySoft text-red border border-primary/10",
     datePrefix: "시험일",
     buttonText: "수험표 확인",
+    actionUrl:
+      "https://www.q-net.or.kr/man001.do?id=man00103&gSite=Q&gId=&redir=myp002.do%3Fid%3Dmyp00201%26gId%3D%26gSite%3DQ",
     icon: CalendarDays,
   },
   RESULT: {
@@ -49,6 +54,8 @@ const WISHLIST_CARD_CONFIG: Record<WishlistCardType, WishlistCardConfig> = {
     badgeClassName: "bg-primarySoft text-blue border border-primary/10",
     datePrefix: "시험발표일",
     buttonText: "결과 확인",
+    actionUrl:
+      "https://www.q-net.or.kr/man001.do?id=man00103&gSite=Q&gId=&redir=rcv202.do%3Fid%3Drcv20210%26gId%3D%26gSite%3DQ",
     icon: CalendarDays,
   },
 };
@@ -193,7 +200,16 @@ const MyWishlistCard = ({
       {config.buttonText && (
         <button
           type="button"
-          onClick={onClick}
+          onClick={() => {
+            if (onClick) {
+              onClick();
+              return;
+            }
+
+            if (config.actionUrl) {
+              window.open(config.actionUrl, "_blank", "noopener,noreferrer");
+            }
+          }}
           className="
             mt-8
             w-full
