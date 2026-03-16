@@ -12,6 +12,20 @@ import { useQuery } from "@tanstack/react-query";
 import CertScheduleDetailModal from "../../components/common/modal/CertScheduleDetailModal";
 import { Search } from "lucide-react";
 
+type DetailTab =
+    | "EXAM_TREND"
+    | "ACQ_METHOD"
+    | "EXAM_SUBJECT"
+    | "PASS_CRITERIA"
+    | "RELATED_DEPARTMENT";
+
+const DETAIL_TAB_OPTIONS: Array<{ key: DetailTab; label: string }> = [
+    { key: "EXAM_TREND", label: "출제 경향" },
+    { key: "ACQ_METHOD", label: "취득 방법" },
+    { key: "EXAM_SUBJECT", label: "시험 과목" },
+    { key: "PASS_CRITERIA", label: "합격 기준" },
+    { key: "RELATED_DEPARTMENT", label: "관련 학과" },
+];
 
 function CalendarPage() {
 
@@ -34,6 +48,7 @@ function CalendarPage() {
 
     // 모달
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedDetailTab, setSelectedDetailTab] = useState<DetailTab>("EXAM_TREND");
 
     //일정 상세조회 버튼 클릭 시 모달 전체 일정 조회를 위한 state
     const [certSchedules, setCertSchedules] = useState<Schedule[]>([]);
@@ -84,6 +99,7 @@ function CalendarPage() {
             setCertificate(certData);
             setSelectedSchedule(props);
             setSelectedEvent(info.event);
+            setSelectedDetailTab("EXAM_TREND");
 
         } catch (error) {
             console.error("자격증 정보 불러오기 실패", error);
@@ -127,6 +143,20 @@ function CalendarPage() {
 
     if (isLoading) return <div>일정을 불러오는 중...</div>
     if (error) return <div>일정 데이터를 불러오는데 실패했습니다.</div>
+
+    const detailButtonClass = (tab: DetailTab) =>
+        selectedDetailTab === tab
+            ? "px-4 py-2.5 text-sm rounded-full bg-[#1A0089] text-white font-medium hover:bg-[#14006d] transition"
+            : "px-4 py-2.5 text-sm rounded-full bg-[#FFF3D6] border border-[#E7DAB7] text-[#6B5520] font-medium hover:bg-[#F7E8C2] transition";
+
+    const detailTextByTab: Record<DetailTab, string | null | undefined> = {
+        EXAM_TREND: certificate?.examTrend,
+        ACQ_METHOD: certificate?.acqMethod,
+        EXAM_SUBJECT: certificate?.examSubject,
+        PASS_CRITERIA: certificate?.passCriteria,
+        RELATED_DEPARTMENT: certificate?.relatedDepartment,
+    };
+    const detailText = detailTextByTab[selectedDetailTab] ?? "등록된 상세 정보가 없습니다.";
 
     return (
         <div className="flex">
@@ -261,17 +291,22 @@ function CalendarPage() {
                             </h2>
 
                             <div className="mt-4 flex flex-wrap gap-3">
-                                <button className="px-4 py-2.5 text-sm rounded-full bg-[#FFF3D6] border border-[#E7DAB7] text-[#6B5520] font-medium hover:bg-[#F7E8C2] transition">
-                                    유의 사항
-                                </button>
+                                {DETAIL_TAB_OPTIONS.map((tab) => (
+                                    <button
+                                        key={tab.key}
+                                        type="button"
+                                        onClick={() => setSelectedDetailTab(tab.key)}
+                                        className={detailButtonClass(tab.key)}
+                                    >
+                                        {tab.label}
+                                    </button>
+                                ))}
+                            </div>
 
-                                <button className="px-4 py-2.5 text-sm rounded-full bg-white border border-[#B8CE52] text-[#1A0089] font-medium hover:bg-[#F8FBEF] transition">
-                                    출제 경향
-                                </button>
-
-                                <button className="px-4 py-2.5 text-sm rounded-full bg-[#1A0089] text-white font-medium hover:bg-[#14006d] transition">
-                                    취득 방법
-                                </button>
+                            <div className="mt-4 rounded-2xl border border-[#E7DAB7] bg-white p-4">
+                                <p className="text-sm leading-6 text-[#334155] whitespace-pre-line">
+                                    {detailText.trim()}
+                                </p>
                             </div>
                         </div>
                     )}
