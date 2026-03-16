@@ -25,7 +25,11 @@ function CertSearch() {
   const [keyword, setKeyword] = useState("");
   const [categoryIds, setCategoryIds] = useState<number[]>([]);
 
-  const { data: searchData, isLoading: isSearchLoading, isError: isSearchError, } = useCertSearch({
+  const {
+    data: searchData,
+    isLoading: isSearchLoading,
+    isError: isSearchError,
+  } = useCertSearch({
     keyword, //검색어
     categoryIds, //카테고리 ids
     page, //1페이지
@@ -65,7 +69,6 @@ function CertSearch() {
     setIsModalOpen(true);
   };
 
-
   //input에 입력했던것으로 검색에 적용할 겁니다.
   const handleSearch = () => {
     setKeyword(searchInput);
@@ -103,9 +106,7 @@ function CertSearch() {
       {/* 좌측 - 사이드바 영역 */}
       <div className="w-[420px] shrink-0 min-h-screen bg-[#FFF9EC] border-r border-[#ECE7D8] p-8 animate-slideIn">
         <div className="pb-6 border-b border-[#ECE7D8]">
-          <h3 className="font-semibold text-[22px] text-[#1A0089]">
-            카테고리
-          </h3>
+          <h3 className="font-semibold text-[22px] text-[#1A0089]">카테고리</h3>
           <p className="mt-2 text-sm text-[#6B7280]">
             원하는 분야를 선택해서 자격증을 찾아보세요.
           </p>
@@ -130,10 +131,11 @@ function CertSearch() {
               return (
                 <label
                   key={category.id}
-                  className={`flex items-center gap-4 cursor-pointer px-3 py-5 rounded-xl transition ${isSelected
-                    ? "bg-[#FFF3D6] border border-[#E7DAB7]"
-                    : "hover:bg-[#FFF3D6]/60"
-                    }`}
+                  className={`flex items-center gap-4 cursor-pointer px-3 py-5 rounded-xl transition ${
+                    isSelected
+                      ? "bg-[#FFF3D6] border border-[#E7DAB7]"
+                      : "hover:bg-[#FFF3D6]/60"
+                  }`}
                 >
                   <input
                     type="checkbox"
@@ -143,10 +145,11 @@ function CertSearch() {
                   />
 
                   <span
-                    className={`text-base ${isSelected
-                      ? "text-[#1A0089] font-semibold"
-                      : "text-gray-700"
-                      }`}
+                    className={`text-base ${
+                      isSelected
+                        ? "text-[#1A0089] font-semibold"
+                        : "text-gray-700"
+                    }`}
                   >
                     {category.name}
                   </span>
@@ -169,15 +172,17 @@ function CertSearch() {
           <div className="flex h-fit p-2 bg-gray-100 rounded-lg gap-2">
             <button
               onClick={() => setViewType("grid")}
-              className={`px-4 py-2 rounded-lg transition font-medium ${viewType === "grid" ? "bg-white shadow-sm" : "hover:bg-gray-200"
-                }`}
+              className={`px-4 py-2 rounded-lg transition font-medium ${
+                viewType === "grid" ? "bg-white shadow-sm" : "hover:bg-gray-200"
+              }`}
             >
               그리드
             </button>
             <button
               onClick={() => setViewType("list")}
-              className={`px-4 py-2 rounded-lg transition font-medium ${viewType === "list" ? "bg-white shadow-sm" : "hover:bg-gray-200"
-                }`}
+              className={`px-4 py-2 rounded-lg transition font-medium ${
+                viewType === "list" ? "bg-white shadow-sm" : "hover:bg-gray-200"
+              }`}
             >
               리스트
             </button>
@@ -238,6 +243,7 @@ function CertSearch() {
                   className={`p-2 ${!isLastItem ? "border-b border-gray-200" : ""}`}
                 >
                   <SearchListCard
+                    certId={item.certId}
                     title={item.name}
                     category={getCategoryName(item.categoryId)}
                     description={item.description ?? ""}
@@ -265,10 +271,11 @@ function CertSearch() {
                 <button
                   key={pageNumber}
                   onClick={() => handlePageClick(pageNumber)}
-                  className={`w-11 h-11 rounded-xl text-sm font-semibold transition ${currentPage === pageNumber
+                  className={`w-11 h-11 rounded-xl text-sm font-semibold transition ${
+                    currentPage === pageNumber
                       ? "bg-[#1A0089] text-white shadow-sm"
                       : "bg-white border border-[#ECE7D8] text-[#1A0089] hover:bg-[#FFF3D6]"
-                    }`}
+                  }`}
                 >
                   {pageNumber + 1}
                 </button>
