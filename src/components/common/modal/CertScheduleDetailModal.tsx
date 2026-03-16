@@ -20,11 +20,11 @@ function CertScheduleDetailModal({ isOpen, onClose, schedules, title }: Props) {
       isOpen={isOpen}
       onClose={onClose}
       title={title ?? `${schedules[0].certificateName} 일정`}
-      panelClassName="max-w-4xl"
+      panelClassName="!w-fit !max-w-none"
     >
-      <div className="max-h-[70vh] overflow-y-auto pr-2">
-        <div className="mt-4">
-          <table className="w-full border-collapse text-left text-xs">
+      <div className="max-h-[70vh] overflow-y-auto overflow-x-hidden pr-2">
+        <div className="mt-4 w-fit">
+          <table className="w-auto border-collapse text-left text-xs">
             <thead>
               <tr className="bg-gray-100">
                 <th className="border border-gray-300 px-3 py-2 font-semibold whitespace-nowrap">시험 종류</th>
