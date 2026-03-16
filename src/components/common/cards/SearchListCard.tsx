@@ -44,7 +44,7 @@ function SearchListCard({
           onClick={onScheduleClick}
           className="w-[160px] h-[50px] bg-[#FE5E32] text-white px-5 py-2 mb-3 rounded-xl font-semibold hover:bg-[#E9552C] transition"
         >
-          일정 보기
+          상세 보기
         </button>
 
         <button className="w-[160px] h-[50px] bg-[#FFF3D6] text-[#6B5520] border border-[#E7DAB7] px-5 py-2 rounded-xl font-semibold hover:bg-[#F7E8C2] transition">
