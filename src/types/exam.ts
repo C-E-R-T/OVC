@@ -4,7 +4,9 @@ export type Certificate = {
   authority: string; //발급 기관
   examTrend: string | null; //출제 경향
   acqMethod: string | null; //취득 방법
-  precautions: string | null; //유의 사항
+  examSubject: string | null; //시험 과목
+  passCriteria: string | null; //합격 기준
+  relatedDepartment: string | null; //관련 학과
   // description: string | null; //자격증 설명
   writtenFee: number | null;
   practicalFee: number | null;
