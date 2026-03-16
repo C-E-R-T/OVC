@@ -4,12 +4,14 @@ import { isAxiosError } from "axios";
 import MyCertCard from "../../components/common/cards/MyCertCard";
 import MyWishlistCard, {
   WISHLIST_CARD_TYPE,
+  type WishlistCardType,
 } from "../../components/common/cards/MyWishlistCard";
 import { Award, Bookmark } from "lucide-react";
 import Modal from "../../components/common/modal/Modal";
 import CertRegisterForm, {
   type CertRegisterFormValues,
 } from "../../components/common/forms/CertRegisterForm";
+import type { Schedule } from "../../types/exam";
 import {
   addMyCert,
   deleteMyCert,
@@ -17,6 +19,7 @@ import {
   type MyCertResponse,
 } from "../../api/user";
 import { deleteFavorite, getFavorites } from "../../api/favorite";
+import { getSchedules, getSchedulesByCertificate } from "../../api/schedule";
 
 type CertItem = {
   id: number;
@@ -36,14 +39,165 @@ const mapMyCertResponse = (cert: MyCertResponse): CertItem => ({
   expirationDate: cert.expirationDate ?? undefined,
 });
 
+const toDateOnly = (dateString?: string) => {
+  if (!dateString) return null;
+  // 시간대 영향 없이 yyyy-mm-dd 기준 비교를 위해 시간 정보를 제거
+  const normalized = dateString.split("T")[0];
+  const [year, month, day] = normalized.split("-").map(Number);
+  if (!year || !month || !day) return null;
+  return new Date(year, month - 1, day);
+};
+
+const toWishlistCardType = (rawType?: string): WishlistCardType => {
+  const type = (rawType ?? "").toUpperCase();
+  if (type === WISHLIST_CARD_TYPE.EXAM) return WISHLIST_CARD_TYPE.EXAM;
+  if (type === WISHLIST_CARD_TYPE.RESULT) return WISHLIST_CARD_TYPE.RESULT;
+  return WISHLIST_CARD_TYPE.APPLY;
+};
+
+const getEventPriority = (rawType?: string) => {
+  const type = (rawType ?? "").toUpperCase();
+  if (type === WISHLIST_CARD_TYPE.EXAM) return 3;
+  if (type === WISHLIST_CARD_TYPE.RESULT) return 2;
+  if (type === WISHLIST_CARD_TYPE.APPLY) return 1;
+  return 0;
+};
+
+const getScheduleRange = (schedule: Schedule) => {
+  // 이벤트 타입별 표준 시작/종료 필드를 우선 사용하고, 없으면 공통 필드로 보정
+  const type = (schedule.eventType ?? "").toUpperCase();
+  const startByType =
+    type === "APPLY"
+      ? schedule.applyStartAt
+      : type === "EXAM"
+        ? schedule.examStartAt
+        : schedule.resultAt;
+  const endByType =
+    type === "APPLY"
+      ? schedule.applyEndAt
+      : type === "EXAM"
+        ? schedule.examEndAt
+        : schedule.resultAt;
+
+  const start = schedule.startDate || startByType;
+  const end = schedule.endDate || endByType || start;
+
+  if (!toDateOnly(start) || !toDateOnly(end)) return null;
+  return { start, end };
+};
+
+const getTodayInProgressSchedules = (schedules: Schedule[]) => {
+  const today = new Date();
+  const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+  return schedules.filter((schedule) => {
+    const range = getScheduleRange(schedule);
+    if (!range) return false;
+    const start = toDateOnly(range.start);
+    const end = toDateOnly(range.end);
+    return !!start && !!end && todayOnly >= start && todayOnly <= end;
+  });
+};
+
+const getRepresentativeSchedule = (schedules: Schedule[]) => {
+  if (schedules.length === 0) return null;
+
+  // 1순위: 오늘 진행 중인 일정(우선순위/종료일 기준 정렬)
+  const inProgress = getTodayInProgressSchedules(schedules).sort((a, b) => {
+    const aRange = getScheduleRange(a);
+    const bRange = getScheduleRange(b);
+    if (!aRange || !bRange) return 0;
+    const priorityDiff = getEventPriority(b.eventType) - getEventPriority(a.eventType);
+    if (priorityDiff !== 0) return priorityDiff;
+    const aEnd = toDateOnly(aRange.end);
+    const bEnd = toDateOnly(bRange.end);
+    if (!aEnd || !bEnd) return 0;
+    return aEnd.getTime() - bEnd.getTime();
+  });
+
+  if (inProgress.length > 0) return inProgress[0];
+
+  const today = new Date();
+  const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  // 2순위: 예정 일정(시작일 빠른 순, 동률 시 이벤트 우선순위)
+  const upcoming = schedules
+    .filter((schedule) => {
+      const range = getScheduleRange(schedule);
+      if (!range) return false;
+      const start = toDateOnly(range.start);
+      return !!start && start >= todayOnly;
+    })
+    .sort((a, b) => {
+      const aRange = getScheduleRange(a);
+      const bRange = getScheduleRange(b);
+      if (!aRange || !bRange) return 0;
+      const aStart = toDateOnly(aRange.start);
+      const bStart = toDateOnly(bRange.start);
+      if (!aStart || !bStart) return 0;
+      const startDiff = aStart.getTime() - bStart.getTime();
+      if (startDiff !== 0) return startDiff;
+      return getEventPriority(b.eventType) - getEventPriority(a.eventType);
+    });
+
+  if (upcoming.length > 0) return upcoming[0];
+  return null;
+};
+
+const getActiveStatuses = (schedules: Schedule[]) => {
+  // 오늘 진행 중인 일정의 이벤트 타입만 뽑아 중복 제거 후 우선순위 정렬
+  const inProgress = getTodayInProgressSchedules(schedules);
+  const unique = Array.from(
+    new Set(inProgress.map((schedule) => toWishlistCardType(schedule.eventType))),
+  );
+  return unique.sort((a, b) => getEventPriority(b) - getEventPriority(a));
+};
+
 function CertManage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const queryClient = useQueryClient();
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1;
+  const nextMonthDate = new Date(currentYear, now.getMonth() + 1, 1);
+  const nextYear = nextMonthDate.getFullYear();
+  const nextMonth = nextMonthDate.getMonth() + 1;
 
   //찜 목록 데이터를 가져옴
   const {data: favorites = [] } = useQuery({
     queryKey: ["favorites"],
     queryFn: getFavorites
+  });
+
+  const favoriteScheduleMapQuery = useQuery({
+    queryKey: ["favoriteScheduleMap", currentYear, favorites.map((item) => item.certId)],
+    queryFn: async () => {
+      // 자격증별 상세 일정 API를 병렬 호출해 카드 렌더링용 맵 구성
+      const entries = await Promise.all(
+        favorites.map(async (item) => {
+          try {
+            const schedules = await getSchedulesByCertificate(item.certId, currentYear);
+            return [item.certId, schedules] as const;
+          } catch {
+            return [item.certId, []] as const;
+          }
+        }),
+      );
+
+      return Object.fromEntries(entries) as Record<number, Schedule[]>;
+    },
+    enabled: favorites.length > 0,
+  });
+
+  const monthlySchedulePoolQuery = useQuery({
+    queryKey: ["wishlistSchedulePool", currentYear, currentMonth, nextYear, nextMonth],
+    queryFn: async () => {
+      // 월별 API에 걸리는 경계 일정 보완을 위해 이번 달 + 다음 달을 합쳐 사용
+      const [currentMonthSchedules, nextMonthSchedules] = await Promise.all([
+        getSchedules(currentYear, currentMonth),
+        getSchedules(nextYear, nextMonth),
+      ]);
+      return [...currentMonthSchedules, ...nextMonthSchedules];
+    },
   });
 
   const {
@@ -185,16 +339,38 @@ function CertManage() {
           </div>
           <div className="flex justify-center"></div>
           <div className="grid grid-cols-2 gap-6 mx-auto max-w-[1000px]">
-            {favorites.map((item) => (
-              <MyWishlistCard
-              key={item.certId}
-              type={WISHLIST_CARD_TYPE.APPLY}
-              title={item.title}
-              startDate={item.startDate}
-              endDate={item.endDate}
-              onDelete={() => deleteFavoriteMutation.mutate(item.certId)}
-              />
-            ))}
+            {favorites.map((item) => {
+              const byCertApi = favoriteScheduleMapQuery.data?.[item.certId] ?? [];
+              const byMonthPool = (monthlySchedulePoolQuery.data ?? []).filter(
+                (schedule) => schedule.certId === item.certId,
+              );
+              // 서로 다른 소스의 동일 일정을 dedupe 후 대표 일정 계산에 사용
+              const scheduleMap = new Map<string, Schedule>();
+              [...byCertApi, ...byMonthPool].forEach((schedule) => {
+                scheduleMap.set(`${schedule.scheduleId}-${schedule.eventType}`, schedule);
+              });
+              const schedules = Array.from(scheduleMap.values());
+
+              const representative = getRepresentativeSchedule(schedules);
+              const representativeRange = representative ? getScheduleRange(representative) : null;
+              const activeStatuses = getActiveStatuses(schedules);
+
+              const type = representative
+                ? toWishlistCardType(representative.eventType)
+                : toWishlistCardType(item.type ?? item.eventType ?? item.examType);
+
+              return (
+                <MyWishlistCard
+                  key={item.certId}
+                  type={type}
+                  title={item.title}
+                  startDate={representativeRange?.start ?? item.startDate}
+                  endDate={representativeRange?.end ?? item.endDate}
+                  activeStatuses={activeStatuses}
+                  onDelete={() => deleteFavoriteMutation.mutate(item.certId)}
+                />
+              );
+            })}
           </div>
         </section>
       </div>
