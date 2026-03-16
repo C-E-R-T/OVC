@@ -6,9 +6,9 @@ export type Certificate = {
   practicalFee: number | null; //실기 응시료
   examTrend: string | null; //출제 경향
   acqMethod: string | null; //취득 방법
-  examSubject: string | null;
-  passCriteria: string | null;
-  relatedDepartment: string | null;
+  examSubject: string | null; //시험과목
+  passCriteria: string | null; //합격기준
+  relatedDepartment: string | null; //관련학과 
   category_id: number;
   created_at: string;
 };
