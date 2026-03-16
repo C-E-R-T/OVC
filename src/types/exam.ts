@@ -2,12 +2,13 @@ export type Certificate = {
   id: number;
   name: string;
   authority: string; //발급 기관
+  writtenFee: number | null; //필기 응시료
+  practicalFee: number | null; //실기 응시료
   examTrend: string | null; //출제 경향
   acqMethod: string | null; //취득 방법
-  precautions: string | null; //유의 사항
-  // description: string | null; //자격증 설명
-  writtenFee: number | null;
-  practicalFee: number | null;
+  examSubject: string | null; //시험과목
+  passCriteria: string | null; //합격기준
+  relatedDepartment: string | null; //관련학과 
   category_id: number;
   created_at: string;
 };
