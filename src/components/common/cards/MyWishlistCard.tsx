@@ -129,7 +129,10 @@ const MyWishlistCard = ({
         border
         border-gray-100
         bg-white
-        p-8
+        pb-24
+        pt-8
+        pl-8
+        pr-8
         shadow-sm
         transition
         hover:-translate-y-1
@@ -161,7 +164,7 @@ const MyWishlistCard = ({
         </button>
       )}
 
-      <div className="mb-6 flex items-start gap-3 flex-wrap">
+      <div className="mb-6 items-start gap-3 flex flex-row flex-wrap">
         {(activeStatuses.length > 1 ? activeStatuses : [type]).map((status) => {
           const statusConfig = WISHLIST_CARD_CONFIG[status];
           return (
@@ -193,7 +196,7 @@ const MyWishlistCard = ({
       <div className="mt-6 flex items-center gap-3 text-gray-500">
         <Icon className="h-5 w-5 text-primary" />
         <span className="text-base">
-          {config.datePrefix} : {formatDateRange(startDate, endDate)}
+          {config.datePrefix} : <br />{formatDateRange(startDate, endDate)}
         </span>
       </div>
 
@@ -211,17 +214,19 @@ const MyWishlistCard = ({
             }
           }}
           className="
-            mt-8
-            w-full
-            rounded-xl
-            bg-gray-900
-            py-3
-            font-semibold
-            text-white
-            transition
-            hover:bg-primaryDark
-            active:scale-[0.98]
-          "
+  absolute
+  left-8
+  right-8
+  bottom-8
+  rounded-xl
+  bg-gray-900
+  py-3
+  font-semibold
+  text-white
+  transition
+  hover:bg-primaryDark
+  active:scale-[0.98]
+"
         >
           {config.buttonText}
         </button>

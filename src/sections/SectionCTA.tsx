@@ -1,6 +1,19 @@
+import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion"
+import { getMyInfo } from "../api/user";
+import { useNavigate } from "react-router-dom";
 
 function SectionCTA() {
+  const { data: user, isLoading } = useQuery({
+    queryKey: ["myInfo"],
+    queryFn: getMyInfo,
+    retry: false,
+  });
+
+  const isLoggedIn = !!user;
+
+  const navigate = useNavigate();
+
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-b from-white via-primarySoft/40 to-primarySoft">
       <div className="max-w-[1400px] mx-auto px-10 lg:px-20 w-full text-center">
@@ -43,7 +56,11 @@ function SectionCTA() {
           viewport={{ once: true }}
           whileHover={{ scale: 1.04 }}
           whileTap={{ scale: 0.98 }}
-          className="bg-primary text-lg lg:text-xl text-white font-semibold px-16 sm:px-24 lg:px-32 py-5 lg:py-6 rounded-full transition"
+          onClick={() => {
+            if (isLoading) return;
+            navigate(isLoggedIn ? "/mypage" : "/login");
+          }}
+          className="bg-primary text-lg lg:text-xl text-white font-semibold mt-10 px-16 sm:px-24 lg:px-32 py-5 lg:py-6 rounded-full transition"
         >
           시작하기
         </motion.button>

@@ -1,32 +1,39 @@
-import { motion } from "framer-motion"
-import { useRef } from "react"
+import { motion } from "framer-motion";
+import { Search } from "lucide-react";
+import { useState } from "react";
+import SearchGridCard from "../components/common/cards/SearchGridCard";
+import { useCertSearch } from "../hooks/useCertSearch";
+import { useCategory } from "../hooks/useCategory";
 
 function SectionSearch() {
-  const sliderRef = useRef<HTMLDivElement | null>(null)
+  const [keyword] = useState("");
+  const [categoryIds] = useState<number[]>([]);
 
-  const scrollLeft = () => {
-    if (!sliderRef.current) return
+  const {
+    data: searchData,
+    isLoading: isSearchLoading,
+    isError: isSearchError,
+  } = useCertSearch({
+    keyword,
+    categoryIds,
+    size: 6,
+    sort: "name,ASC",
+  });
 
-    sliderRef.current.scrollBy({
-      left: -320,
-      behavior: "smooth"
-    })
-  }
+  const { data: categoryData } = useCategory();
 
-  const scrollRight = () => {
-    if (!sliderRef.current) return
+  const certs = searchData?.data?.content ?? [];
+  const categories = categoryData?.data ?? [];
+  const loopCerts = [...certs, ...certs];
 
-    sliderRef.current.scrollBy({
-      left: 320,
-      behavior: "smooth"
-    })
-  }
+  const getCategoryName = (categoryId: number) => {
+    return categories.find((category) => category.id === categoryId)?.name ?? "";
+  };
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-b from-white via-white to-primarySoft/40">
-
       <div className="relative max-w-[1400px] mx-auto px-10 lg:px-20 w-full">
-        {/* title */}
+        {/* 제목 */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -55,7 +62,7 @@ function SectionSearch() {
           </p>
         </motion.div>
 
-        {/* search */}
+        {/* 검색바 */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -63,9 +70,9 @@ function SectionSearch() {
           viewport={{ once: true, amount: 0.3 }}
           className="mb-20"
         >
-          <div className="max-w-[720px] rounded-full border border-primary/10 bg-[#1D2822] px-8 py-5 flex items-center shadow-xl shadow-primary/10">
+          <div className="w-full rounded-full border border-primary/10 mb-30 px-8 py-5 flex items-center shadow-xl shadow-gray/10 bg-white/90">
             <input
-              className="flex-1 bg-transparent text-white placeholder-gray-400 outline-none text-base lg:text-lg"
+              className="flex-1 bg-transparent text-gray-700 placeholder-gray-400 outline-none text-base lg:text-lg"
               placeholder="ex) SQLD, 정보처리기사"
             />
 
@@ -73,12 +80,12 @@ function SectionSearch() {
               whileHover={{ scale: 1.1 }}
               className="text-gray-300 text-xl"
             >
-              🔍
+              <Search size={18} />
             </motion.div>
           </div>
         </motion.div>
 
-        {/* slider */}
+        {/* 카드 레일 */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -86,54 +93,55 @@ function SectionSearch() {
           viewport={{ once: true, amount: 0.2 }}
           className="relative"
         >
-          {/* left button */}
-          <motion.button
-            onClick={scrollLeft}
-            whileHover={{ scale: 1.08, x: -2 }}
-            whileTap={{ scale: 0.96 }}
-            className="absolute -left-5 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm border border-primary/10 shadow-lg w-11 h-11 rounded-full z-10 text-gray-700"
-          >
-            ‹
-          </motion.button>
+          {isSearchLoading && (
+            <div className="py-16 text-center text-gray-500">불러오는 중...</div>
+          )}
 
-          {/* cards */}
-          <div
-            ref={sliderRef}
-            className="flex gap-8 overflow-x-auto scroll-smooth pb-4 no-scrollbar"
-          >
-            {[1, 2, 3, 4, 5, 6].map((i) => (
+          {isSearchError && (
+            <div className="py-16 text-center text-red-500">
+              데이터를 불러오지 못했습니다.
+            </div>
+          )}
+
+          {!isSearchLoading && !isSearchError && certs.length === 0 && (
+            <div className="py-16 text-center text-gray-500">
+              조건에 맞는 자격증이 없습니다.
+            </div>
+          )}
+
+          {!isSearchLoading && !isSearchError && certs.length > 0 && (
+            <div className="overflow-hidden">
               <motion.div
-                key={i}
-                whileHover={{ y: -8 }}
-                transition={{ duration: 0.25 }}
-                className="group min-w-[260px] rounded-2xl border border-primary/10 bg-white/90 backdrop-blur-sm p-8 shadow-sm hover:shadow-xl hover:shadow-primary/10 transition"
+                className="flex w-max gap-8"
+                animate={{ x: ["0%", "-50%"] }}
+                transition={{
+                  duration: 150,
+                  ease: "linear",
+                  repeat: Infinity,
+                }}
               >
-                <div className="h-32 rounded-xl bg-gradient-to-br from-primarySoft via-white to-primarySoft/70 mb-6 border border-primary/10" />
-
-                <h3 className="font-semibold mb-2 text-gray-900 group-hover:text-primary transition">
-                  SQL Developer
-                </h3>
-
-                <p className="text-sm text-gray-500 leading-6">
-                  데이터베이스 자격증
-                </p>
+                {loopCerts.map((item, index) => (
+                  <motion.div
+                    key={`${item.certId}-${index}`}
+                    whileHover={{ y: -8 }}
+                    transition={{ duration: 0.25 }}
+                    className="min-w-[260px] shrink-0"
+                  >
+                    <SearchGridCard
+                      certId={item.certId}
+                      title={item.name}
+                      category={getCategoryName(item.categoryId)}
+                      description={item.description ?? ""}
+                    />
+                  </motion.div>
+                ))}
               </motion.div>
-            ))}
-          </div>
-
-          {/* right button */}
-          <motion.button
-            onClick={scrollRight}
-            whileHover={{ scale: 1.08, x: 2 }}
-            whileTap={{ scale: 0.96 }}
-            className="absolute -right-5 top-1/2 -translate-y-1/2 bg-white/90 backdrop-blur-sm border border-primary/10 shadow-lg w-11 h-11 rounded-full z-10 text-gray-700"
-          >
-            ›
-          </motion.button>
+            </div>
+          )}
         </motion.div>
       </div>
     </section>
-  )
+  );
 }
 
-export default SectionSearch
+export default SectionSearch;
