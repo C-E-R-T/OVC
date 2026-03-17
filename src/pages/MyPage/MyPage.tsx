@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { getMyInfo } from "../../api/user";
+import { getMyInfo, getMyCerts } from "../../api/user";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { getFavorites } from "../../api/favorite";
 
 function MyPage() {
   const navigate = useNavigate();
@@ -26,6 +27,20 @@ function MyPage() {
     queryKey: ["myInfo"],
     queryFn: getMyInfo,
     retry: ready,
+  });
+
+  const { data: myCertCount = 0 } = useQuery({
+    queryKey: ["myCertCount"],
+    queryFn: async () => (await getMyCerts()).length,
+    enabled: ready,
+    retry: false,
+  });
+
+  const { data: favoriteCount = 0 } = useQuery({
+    queryKey: ["favoriteCount"],
+    queryFn: async () => (await getFavorites()).length,
+    enabled: ready,
+    retry: false,
   });
 
   if (isLoading) {
@@ -98,12 +113,12 @@ function MyPage() {
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
               <div className="rounded-[32px] border border-white/70 bg-white/45 p-8 text-center shadow-[0_14px_40px_rgba(15,23,42,0.05)] backdrop-blur-2xl">
-                <p className="text-[34px] font-bold text-gray-900">12</p>
+                <p className="text-[34px] font-bold text-gray-900">{myCertCount}</p>
                 <p className="mt-2 text-sm text-gray-500">취득 자격증</p>
               </div>
 
               <div className="rounded-[32px] border border-white/70 bg-white/45 p-8 text-center shadow-[0_14px_40px_rgba(15,23,42,0.05)] backdrop-blur-2xl">
-                <p className="text-[34px] font-bold text-gray-900">28</p>
+                <p className="text-[34px] font-bold text-gray-900">{favoriteCount}</p>
                 <p className="mt-2 text-sm text-gray-500">위시리스트</p>
               </div>
             </div>

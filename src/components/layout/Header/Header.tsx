@@ -1,8 +1,11 @@
-import { useQuery } from "@tanstack/react-query"
-import { Link } from "react-router-dom"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { Link, useNavigate } from "react-router-dom"
+import { logout } from "../../../api/auth"
 import { getMyInfo } from "../../../api/user"
 
 function Header() {
+    const navigate = useNavigate();
+    const queryClient = useQueryClient();
     const { data: user, isLoading, isError } = useQuery({
         queryKey: ["myInfo"],
         queryFn: getMyInfo,
@@ -15,6 +18,19 @@ function Header() {
     console.log("isLoading:", isLoading);
     console.log("isLoggedIn:", isLoggedIn);
     console.log("isError:", isError);
+
+    const handleLogout = async () => {
+        try {
+            await logout();
+        } catch (error) {
+            console.error("로그아웃 실패:", error);
+        } finally {
+            // 서버 응답 실패 여부와 무관하게 클라이언트 인증 상태는 정리한다.
+            localStorage.removeItem("accessToken");
+            queryClient.removeQueries({ queryKey: ["myInfo"] });
+            navigate("/", { replace: true });
+        }
+    };
 
     return (
         <header className="fixed top-4 left-0 z-50 w-full px-6">
@@ -50,12 +66,21 @@ function Header() {
 
                     <div className="flex items-center gap-3">
                         {isLoading ? null : isLoggedIn ? (
-                            <Link
-                                to="/mypage"
-                                className="text-[15px] font-medium text-gray-600 transition hover:text-gray-900"
-                            >
-                                마이페이지
-                            </Link>
+                            <>
+                                <Link
+                                    to="/mypage"
+                                    className="text-[15px] font-medium text-gray-600 transition hover:text-gray-900"
+                                >
+                                    마이페이지
+                                </Link>
+                                <button
+                                    type="button"
+                                    onClick={handleLogout}
+                                    className="text-[15px] font-medium text-gray-600 transition hover:text-gray-900"
+                                >
+                                    로그아웃
+                                </button>
+                            </>
                         ) : (
                             <Link
                                 to="/login"
