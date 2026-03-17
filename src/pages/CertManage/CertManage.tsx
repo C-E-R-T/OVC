@@ -19,6 +19,7 @@ import {
 import { deleteFavorite, getFavorites } from "../../api/favorite";
 import { getSchedules, getSchedulesByCertificate } from "../../api/schedule";
 import type { Schedule } from "../../types/exam";
+import CertificateRanking from "../../components/common/cards/CertificateRanking";
 
 type CertItem = {
   id: number;
@@ -278,8 +279,8 @@ function CertManage() {
   return (
     <div className="min-h-screen px-6 pb-18 pt-30">
       <div className="mx-auto w-full max-w-[1440px]">
-        <section className="mb-6 p-8 h-full">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+        <section className="mb-4 p-8 h-full">
+          <div className="mb-7 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <p className="mb-3 text-sm font-semibold tracking-[0.18em] text-gray">
                 MY CERTIFICATIONS
@@ -300,6 +301,9 @@ function CertManage() {
             >
               내 자격증 등록
             </button>
+          </div>
+          <div className="space-y-8">
+            <CertificateRanking />
           </div>
         </section>
 
