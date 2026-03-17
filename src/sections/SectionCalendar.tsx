@@ -2,7 +2,7 @@ import { motion } from "framer-motion"
 import { useNavigate } from "react-router-dom"
 
 function SectionCalendar() {
-  
+
   const navigate = useNavigate();
 
   return (
@@ -50,8 +50,7 @@ function SectionCalendar() {
           initial={{ opacity: 0, x: 60, y: 20 }}
           whileInView={{ opacity: 1, x: 0, y: 0 }}
           transition={{ duration: 0.9, ease: "easeOut", delay: 0.1 }}
-          viewport={{ once: true, amount: 0.3 }}
-          whileHover={{ y: -6 }}
+          viewport={{ once: true, amount: 0.25 }}
           className="relative rounded-3xl transition"
         >
           {/* 캘린더 이미지 */}
@@ -61,9 +60,9 @@ function SectionCalendar() {
             <div className="absolute right-10 top-10 z-10 w-[100%] rounded-[28px] bg-white p-6 shadow-[0_20px_60px_rgba(0,0,0,0.08)]">
               {/* 카드 상단 느낌 */}
               <div className="mb-4 flex items-start gap-2">
-                <span className="w-3 h-3 rounded-full bg-primary/40" />
-                <span className="w-3 h-3 rounded-full bg-primary/25" />
-                <span className="w-3 h-3 rounded-full bg-primary/15" />
+                <span className="w-3 h-3 rounded-full bg-[#FF5F57]" />
+                <span className="w-3 h-3 rounded-full bg-[#FEBC2E]" />
+                <span className="w-3 h-3 rounded-full bg-[#28C840]" />
               </div>
 
               <img
@@ -76,9 +75,9 @@ function SectionCalendar() {
             {/* 앞쪽 카드 */}
             <div className="absolute left-50 top-90 z-20 w-[72%] rounded-[28px] bg-white p-6 shadow-[0_20px_60px_rgba(0,0,0,0.1)]">
               <div className="mb-4 flex items-start gap-2">
-                <span className="w-3 h-3 rounded-full bg-primary/40" />
-                <span className="w-3 h-3 rounded-full bg-primary/25" />
-                <span className="w-3 h-3 rounded-full bg-primary/15" />
+                <span className="w-3 h-3 rounded-full bg-[#FF5F57]" />
+                <span className="w-3 h-3 rounded-full bg-[#FEBC2E]" />
+                <span className="w-3 h-3 rounded-full bg-[#28C840]" />
               </div>
               <img
                 src="/calendar_image_2.png"

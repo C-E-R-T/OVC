@@ -3,14 +3,14 @@ import { useNavigate } from "react-router-dom"
 
 function SectionMyCert() {
 
-  const navigate=useNavigate();
+  const navigate = useNavigate();
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-b from-primarySoft/40 via-white to-white">
       {/* background decoration */}
       <div className="relative max-w-[1400px] mx-auto px-10 lg:px-20 w-full grid lg:grid-cols-[1.1fr_1fr] items-center">
         <motion.div
-          initial={{ opacity: 0, x: -60, y: 20 }}
+          initial={{ opacity: 0, x: -100, y: 20 }}
           whileInView={{ opacity: 1, x: 0, y: 0 }}
           transition={{ duration: 0.85, ease: "easeOut" }}
           viewport={{ once: true, amount: 0.3 }}
@@ -24,8 +24,8 @@ function SectionMyCert() {
           </h2>
 
           <h3 className="text-2xl lg:text-3xl font-bold mb-8 text-gray-800 leading-snug">
-            취득한 자격증과 목표 자격증을 관리하고 
-            <br/>인기 자격증 랭킹을 확인하세요
+            취득한 자격증과 목표 자격증을 관리하고
+            <br />인기 자격증 랭킹을 확인하세요
           </h3>
 
           <p className="text-gray-600 text-base lg:text-lg max-w-lg mb-10 leading-8">
@@ -40,7 +40,7 @@ function SectionMyCert() {
           <motion.button
             whileHover={{ scale: 1.04, y: -2 }}
             whileTap={{ scale: 0.98 }}
-            onClick={()=>navigate("/cert-manage")}
+            onClick={() => navigate("/cert-manage")}
             className="bg-primary text-lg lg:text-xl text-white mt-10 px-16 sm:px-24 lg:px-32 py-5 lg:py-6 rounded-full shadow-lg shadow-primary/20 transition"
           >
             내 자격증 보기
@@ -54,12 +54,6 @@ function SectionMyCert() {
           viewport={{ once: true, amount: 0.25 }}
           className="grid grid-cols-2 gap-6"
         >
-
-
-
-
-
-
           {/* 캘린더 이미지 */}
           <div className="relative h-[520px] w-full">
 
@@ -67,9 +61,9 @@ function SectionMyCert() {
             <div className="absolute left-10 top-0 z-10 w-[200%] rounded-[28px] bg-white p-6 shadow-[0_20px_60px_rgba(0,0,0,0.08)]">
               {/* 카드 상단 느낌 */}
               <div className="mb-4 flex items-start gap-2">
-                <span className="w-3 h-3 rounded-full bg-primary/40" />
-                <span className="w-3 h-3 rounded-full bg-primary/25" />
-                <span className="w-3 h-3 rounded-full bg-primary/15" />
+                <span className="w-3 h-3 rounded-full bg-[#FF5F57]" />
+                <span className="w-3 h-3 rounded-full bg-[#FEBC2E]" />
+                <span className="w-3 h-3 rounded-full bg-[#28C840]" />
               </div>
 
               <img
@@ -82,9 +76,9 @@ function SectionMyCert() {
             {/* 앞쪽 카드 */}
             <div className="absolute left-00 top-60 z-20 w-[190%] rounded-[28px] bg-white p-6 shadow-[0_20px_60px_rgba(0,0,0,0.1)]">
               <div className="mb-4 flex items-start gap-2">
-                <span className="w-3 h-3 rounded-full bg-primary/40" />
-                <span className="w-3 h-3 rounded-full bg-primary/25" />
-                <span className="w-3 h-3 rounded-full bg-primary/15" />
+                <span className="w-3 h-3 rounded-full bg-[#FF5F57]" />
+                <span className="w-3 h-3 rounded-full bg-[#FEBC2E]" />
+                <span className="w-3 h-3 rounded-full bg-[#28C840]" />
               </div>
               <img
                 src="/mycert_image_2.png"
@@ -93,17 +87,6 @@ function SectionMyCert() {
               />
             </div>
           </div>
-
-
-
-
-
-
-
-
-
-
-
         </motion.div>
       </div>
     </section>
