@@ -38,7 +38,7 @@ const Modal = ({ isOpen, title, children, onClose, panelClassName = "" }: ModalP
         onClick={onClose}
       />
 
-      <div className={`relative z-10 w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl ${panelClassName}`}>
+      <div className={`relative z-10 w-full max-w-lg rounded-2xl bg-white p-10 shadow-2xl ${panelClassName}`}>
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl font-bold text-slate-900">{title}</h2>
           <button
