@@ -16,75 +16,79 @@ function CertDetailModal({ isOpen, certId, onClose }: CertDetailModalProps) {
       title={detailData?.data.name ?? "자격증 상세정보"}
       onClose={onClose}
     >
-      {!certId && (
-        <p className="text-center text-gray-400 py-10">
-          자격증을 선택해주세요.
-        </p>
-      )}
+      {/* ❗ 여기 핵심: 스크롤 영역 */}
+      <div className="max-h-[70vh] overflow-y-auto pr-2">
 
-      {certId && isLoading && (
-        <p className="text-center text-gray-400 py-10">
-          상세정보 불러오는 중...
-        </p>
-      )}
+        {!certId && (
+          <p className="text-center text-gray-400 py-10">
+            자격증을 선택해주세요.
+          </p>
+        )}
 
-      {certId && isError && (
-        <p className="text-center text-red-400 py-10">
-          상세정보를 불러오지 못했습니다.
-        </p>
-      )}
+        {certId && isLoading && (
+          <p className="text-center text-gray-400 py-10">
+            상세정보 불러오는 중...
+          </p>
+        )}
 
-      {certId && !isLoading && !isError && detailData?.data && (
-        <div className="space-y-6">
+        {certId && isError && (
+          <p className="text-center text-red-400 py-10">
+            상세정보를 불러오지 못했습니다.
+          </p>
+        )}
 
-          {/* 시행기관 */}
-          <InfoBlock title="시행기관">
-            {detailData.data.authority}
-          </InfoBlock>
+        {certId && !isLoading && !isError && detailData?.data && (
+          <div className="space-y-6">
 
-          {/* 시험 경향 */}
-          <InfoBlock title="시험 경향">
-            {detailData.data.examTrend}
-          </InfoBlock>
+            {/* 시행기관 */}
+            <InfoBlock title="시행기관">
+              {detailData.data.authority}
+            </InfoBlock>
 
-          {/* 시험 과목 */}
-          <InfoBlock title="시험 과목">
-            {detailData.data.examSubject}
-          </InfoBlock>
+            {/* 시험 경향 */}
+            <InfoBlock title="시험 경향">
+              {detailData.data.examTrend}
+            </InfoBlock>
 
-          {/* 취득 방법 */}
-          <InfoBlock title="취득 방법">
-            {detailData.data.acqMethod}
-          </InfoBlock>
+            {/* 시험 과목 */}
+            <InfoBlock title="시험 과목">
+              {detailData.data.examSubject}
+            </InfoBlock>
 
-          {/* 관련 학과 */}
-          <InfoBlock title="관련 학과">
-            {detailData.data.relatedDepartment}
-          </InfoBlock>
+            {/* 취득 방법 */}
+            <InfoBlock title="취득 방법">
+              {detailData.data.acqMethod}
+            </InfoBlock>
 
-          {/* 합격 기준 */}
-          <InfoBlock title="합격 기준">
-            {detailData.data.passCriteria}
-          </InfoBlock>
+            {/* 관련 학과 */}
+            <InfoBlock title="관련 학과">
+              {detailData.data.relatedDepartment}
+            </InfoBlock>
 
-          {/* 응시료 */}
-          <div className="flex gap-4">
-            <FeeBadge label="필기 응시료">
-              {detailData.data.writtenFee ?? "미정"}
-            </FeeBadge>
+            {/* 합격 기준 */}
+            <InfoBlock title="합격 기준">
+              {detailData.data.passCriteria}
+            </InfoBlock>
 
-            <FeeBadge label="실기 응시료">
-              {detailData.data.practicalFee ?? "미정"}
-            </FeeBadge>
+            {/* 응시료 */}
+            <div className="flex gap-4">
+              <FeeBadge label="필기 응시료">
+                {detailData.data.writtenFee ?? "미정"}
+              </FeeBadge>
+
+              <FeeBadge label="실기 응시료">
+                {detailData.data.practicalFee ?? "미정"}
+              </FeeBadge>
+            </div>
+
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </Modal>
   );
 }
 
 export default CertDetailModal;
-
 
 
 /* -------------------- UI 컴포넌트 -------------------- */

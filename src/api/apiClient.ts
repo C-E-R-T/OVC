@@ -125,7 +125,7 @@ apiClient.interceptors.response.use(
       //서버의 응답 안에서 실제 새 accessToken만 꺼냄
       const newAccessToken = refreshResponse.data?.data;
 
-      //서버가 응답은 했지맘 토큰 값이 비어있을 경우를 대비하여 
+      //서버가 응답은 했지만 토큰 값이 비어있을 경우를 대비하여 
       // 실제 accessToken이 존재하는지 검증
       if (!newAccessToken) {
         throw new Error("재발급된 access token이 없습니다.");
